@@ -19,8 +19,8 @@ This library was inspired by [Crayon](https://github.com/riezebosch/crayon), exc
 ## How to use
 
 ```cs
-Console.WriteLine($"Press {"ENTER".Pastel(Color.FromArgb(165, 229, 250))} to continue";)
+Console.WriteLine($"Press {"ENTER".Pastel(Color.FromArgb(165, 229, 250))} to continue");
 ```
 
-**IMPORTANT!** _Note that ANSI codes cannot be produced inside verbatim strings (`@"string"`), as these will interpret the escape sequences literally rather than transforming them into the intended codes._
+
 
