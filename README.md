@@ -1,5 +1,8 @@
 # Pastel
 
+[![NuGet](https://img.shields.io/nuget/dt/Pastel.svg)](https://www.nuget.org/packages/Pastel)
+[![NuGet](https://img.shields.io/nuget/v/Pastel.svg)](https://www.nuget.org/packages/Pastel)
+
 Give your console app a nicer look by adding some color to the output it produces. 
 This is achieved by wrapping strings of the output in [ANSI codes](https://www.jerriepelser.com/blog/using-ansi-color-codes-in-net-console-apps/) that instruct the terminal to color the string based on the interpreted code.
 
