@@ -4,6 +4,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Company>Gabriel Bider</Company>
     <Authors>Gabriel Bider</Authors>
+    <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
+    <PackageLicenseUrl>https://github.com/silkfire/Pastel/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
+    <PackageTags>console</PackageTags>
   </PropertyGroup>
 
 </Project>
