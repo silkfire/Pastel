@@ -41,7 +41,7 @@
 
 
         /// <summary>
-        /// Returns a string wrapped in an ANSI color code using the specified color.
+        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
@@ -51,7 +51,7 @@
         }
 
         /// <summary>
-        /// Returns a string wrapped in an ANSI color code using the specified color.
+        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB.</para></param>
@@ -60,6 +60,30 @@
             var color = Color.FromArgb(int.Parse(hexColor.Replace("#", ""), NumberStyles.HexNumber));
 
             return Pastel(input, color);
+        }
+
+
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI background color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="color">The color to use on the specified string.</param>
+        public static string PastelBg(this string input, Color color)
+        {
+            return $"\u001b[48;2;{color.R};{color.G};{color.B}m{input}\u001b[0m";
+        }
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI background color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB.</para></param>
+        public static string PastelBg(this string input, string hexColor)
+        {
+            var color = Color.FromArgb(int.Parse(hexColor.Replace("#", ""), NumberStyles.HexNumber));
+
+            return PastelBg(input, color);
         }
     }
 }

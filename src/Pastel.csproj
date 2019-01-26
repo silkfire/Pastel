@@ -7,7 +7,11 @@
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
     <PackageLicenseUrl>https://github.com/silkfire/Pastel/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
-    <PackageTags>console</PackageTags>
+    <PackageTags>console colors ansi colorize</PackageTags>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <PackageReleaseNotes>1.1.0 Added support for background colors.</PackageReleaseNotes>
+    <PackageIconUrl>https://raw.githubusercontent.com/silkfire/Pastel/master/img/logo.png</PackageIconUrl>
   </PropertyGroup>
 
 </Project>
