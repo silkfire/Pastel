@@ -200,5 +200,84 @@ namespace Pastel.Tests
                 Assert.Equal(outputAnsiColorString1, outputAnsiColorString2);
             }
         }
+
+
+        public class NoOutputColor
+        {
+            private const string _input = "input";
+
+
+            private void ColorOutputEnabledTest()
+            {
+                /////////////////
+                // ARRANGE
+                /////////
+
+                ConsoleExtensions.Enable();
+
+
+                /////////////////
+                // ACT
+                /////////
+
+                var outputAnsiColorString1 = _input.Pastel(  Color.FromArgb(1, 1, 1));
+                var outputAnsiColorString2 = _input.Pastel(  "#010101");
+                var outputAnsiColorString3 = _input.PastelBg(Color.FromArgb(1, 1, 1));
+                var outputAnsiColorString4 = _input.PastelBg("#010101");
+
+
+                /////////////////
+                // ASSERT
+                /////////
+
+                Assert.Equal($"\u001b[38;2;1;1;1m{_input}\u001b[0m", outputAnsiColorString1);
+                Assert.Equal($"\u001b[38;2;1;1;1m{_input}\u001b[0m", outputAnsiColorString2);
+                Assert.Equal($"\u001b[48;2;1;1;1m{_input}\u001b[0m", outputAnsiColorString3);
+                Assert.Equal($"\u001b[48;2;1;1;1m{_input}\u001b[0m", outputAnsiColorString4);
+            }
+
+
+            [Fact]
+            public void Output_Should_Honor_Current_State_When_Switching_Between_States()
+            {
+                // Enable color output
+
+                ColorOutputEnabledTest();
+
+
+                // Disable color output
+
+                /////////////////
+                // ARRANGE
+                /////////
+
+                ConsoleExtensions.Disable();
+
+
+                /////////////////
+                // ACT
+                /////////
+
+                var outputAnsiColorString1 = _input.Pastel(  Color.FromArgb(1, 1, 1));
+                var outputAnsiColorString2 = _input.Pastel(  "#010101");
+                var outputAnsiColorString3 = _input.PastelBg(Color.FromArgb(1, 1, 1));
+                var outputAnsiColorString4 = _input.PastelBg("#010101");
+
+
+                /////////////////
+                // ASSERT
+                /////////
+
+                Assert.Equal(_input, outputAnsiColorString1);
+                Assert.Equal(_input, outputAnsiColorString2);
+                Assert.Equal(_input, outputAnsiColorString3);
+                Assert.Equal(_input, outputAnsiColorString4);
+
+
+                // Re-enable color output
+
+                ColorOutputEnabledTest();
+            }
+        }
     }
 }
