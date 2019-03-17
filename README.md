@@ -69,3 +69,11 @@ Pastel now also supports background colors. The syntax is exactly the same excep
 ```
 
 ![Example 4](https://github.com/silkfire/Pastel/blob/master/img/example4.png)
+
+## Disabling / enabling color output
+
+If you for some reason want to disable any future color output produced by Pastel for the duration of your app, simply call `ConsoleExtensions.Disable()`. To re-enable color output, call `ConsoleExtensions.Enable()`.
+
+### NO_COLOR
+
+Pastel will honor systems where console color output has explicitly been requested to be turned off. See more information about this initiative at https://no-color.org.
