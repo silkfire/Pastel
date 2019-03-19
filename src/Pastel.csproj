@@ -8,8 +8,8 @@
     <PackageLicenseUrl>https://github.com/silkfire/Pastel/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <PackageTags>console colors ansi colorize NO_COLOR</PackageTags>
-    <Version>1.2.0</Version>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <Version>1.2.1</Version>
+    <AssemblyVersion>1.2.1.0</AssemblyVersion>
     <PackageReleaseNotes>1.2.0 Added support for NO_COLOR (https://no-color.org). Color output can now be enabled/disabled on demand.</PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/silkfire/Pastel/master/img/logo.png</PackageIconUrl>
   </PropertyGroup>
