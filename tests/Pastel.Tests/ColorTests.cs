@@ -279,5 +279,17 @@ namespace Pastel.Tests
                 ColorOutputEnabledTest();
             }
         }
+
+        [Fact]
+        public void NestedColors()
+        {
+            int red1 = 1, green1 = 1, blue1 = 1;
+            int red2 = 2, green2 = 2, blue2 = 2;
+            string expected = $"{"a".Pastel(Color.FromArgb(red1, green1, blue1))}{"b".Pastel(Color.FromArgb(red2, green2, blue2))}{"c".Pastel(Color.FromArgb(red1, green1, blue1))}";
+            string actual = Color.FromArgb(red1, green1, blue1).Pastel($"a{"b".Pastel(Color.FromArgb(red2, green2, blue2))}c");
+
+
+            Assert.Equal(expected, actual); 
+        }
     }
 }
