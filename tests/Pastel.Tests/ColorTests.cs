@@ -202,6 +202,32 @@ namespace Pastel.Tests
         }
 
 
+        public class NestedColor
+        {
+            [Fact]
+            public void A_Nested_Color_String_Must_Be_Correctly_Closed()
+            {
+                const int red1 = 1, green1 = 1, blue1 = 1;
+                const int red2 = 2, green2 = 2, blue2 = 2;
+
+
+                var output = $"a{"b".Pastel(Color.FromArgb(red2, green2, blue2))}c".Pastel(Color.FromArgb(red1, green1, blue1));
+
+                Assert.Equal("\u001b[38;2;1;1;1ma\u001b[0m\u001b[38;2;2;2;2mb\u001b[0m\u001b[38;2;1;1;1mc\u001b[0m", output);
+            }
+
+
+            [Fact]
+            public void A_Foreground_And_Background_Nested_Color_String_Must_Be_Correctly_Closed()
+            {
+                var outputAnsiColorString = $"{$"START_{"[TEST]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}_END".Pastel(Color.DeepPink)}";
+
+
+                Assert.Equal("\u001b[38;2;255;20;147mSTART_\u001b[0m\u001b[38;2;255;20;147m\u001b[48;2;220;20;60m\u001b[38;2;255;255;0m[TEST]\u001b[0m\u001b[38;2;255;20;147m_END\u001b[0m", outputAnsiColorString);
+            }
+        }
+
+
         public class NoOutputColor
         {
             private const string _input = "input";

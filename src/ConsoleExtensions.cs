@@ -1,9 +1,12 @@
 ﻿namespace Pastel
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Globalization;
+    using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Text.RegularExpressions;
 
 
     public static class ConsoleExtensions
@@ -25,35 +28,88 @@
         public static extern uint GetLastError();
 
 
+        private static bool _enabled;
+
         private delegate string ColorFormat(   string input, Color     color);
-        private delegate string ColorFormatHex(string input, string hexColor);
+        private delegate string HexColorFormat(string input, string hexColor);
+
+        private enum ColorPlane : byte
+        {
+            Foreground,
+            Background
+        }
+
+        private const string           _formatStringStart   = "\u001b[{0};2;";
+        private const string           _formatStringColor   = "{1};{2};{3}m";
+        private const string           _formatStringContent = "{4}";
+        private const string           _formatStringEnd     = "\u001b[0m";
+        private static readonly string _formatStringFull    = $"{_formatStringStart}{_formatStringColor}{_formatStringContent}{_formatStringEnd}";
 
 
-        private const string _formatString       = "\u001b[{0};2;{1};{2};{3}m{4}\u001b[0m";
-        private const string _foregroundModifier = "38";
-        private const string _backgroundModifier = "48";
+        private static readonly Dictionary<ColorPlane, string> _planeFormatModifiers = new Dictionary<ColorPlane, string>
+        {
+            [ColorPlane.Foreground] = "38",
+            [ColorPlane.Background] = "48"
+        };
+
+
+
+        private static readonly Regex  _closeNestedPastelStringRegex1 = new Regex($"({_formatStringEnd.Replace("[", @"\[")})+");
+        private static readonly Regex  _closeNestedPastelStringRegex2 = new Regex($"(?<!^)(?<!{_formatStringEnd.Replace("[", @"\[")})(?<!{string.Format($"{_formatStringStart.Replace("[", @"\[")}{_formatStringColor}", new[] { $"(?:{_planeFormatModifiers[ColorPlane.Foreground]}|{_planeFormatModifiers[ColorPlane.Background]})" }.Concat(Enumerable.Repeat(@"\d{1,3}", 3)).Cast<object>().ToArray())})({string.Format(_formatStringStart.Replace("[", @"\["), $"(?:{_planeFormatModifiers[ColorPlane.Foreground]}|{_planeFormatModifiers[ColorPlane.Background]})")})");
+
+        private static readonly Dictionary<ColorPlane, Regex> _closeNestedPastelStringRegex3 = new Dictionary<ColorPlane, Regex>
+        {
+            [ColorPlane.Foreground] = new Regex($"({_formatStringEnd.Replace("[", @"\[")})(?!{string.Format(_formatStringStart.Replace("[", @"\["), _planeFormatModifiers[ColorPlane.Foreground])})(?!$)"),
+            [ColorPlane.Background] = new Regex($"({_formatStringEnd.Replace("[", @"\[")})(?!{string.Format(_formatStringStart.Replace("[", @"\["), _planeFormatModifiers[ColorPlane.Background])})(?!$)")
+        };
+
+
 
 
         private static readonly Func<string, int> _parseHexColor = hc => int.Parse(hc.Replace("#", ""), NumberStyles.HexNumber);
 
-        private static readonly Func<string,  Color, string, string> _colorFormat    = (s, c, f) => string.Format(_formatString, f, c.R, c.G, c.B, s);
-        private static readonly Func<string, string, string, string> _colorHexFormat = (s, c, f) => _colorFormat(s, Color.FromArgb(_parseHexColor(c)), f);
+        private static readonly Func<string,  Color, ColorPlane, string> _colorFormat    = (i, c, p) => string.Format(_formatStringFull, _planeFormatModifiers[p], c.R, c.G, c.B, CloseNestedPastelStrings(i, c, p));
+        private static readonly Func<string, string, ColorPlane, string> _colorHexFormat = (i, c, p) => _colorFormat(i, Color.FromArgb(_parseHexColor(c)), p);
 
-        private static readonly ColorFormat    _noColorOutputFormat    = (s, _) => s;
-        private static readonly ColorFormatHex _noColorOutputHexFormat = (s, _) => s;
+        private static readonly ColorFormat    _noColorOutputFormat    = (i, _) => i;
+        private static readonly HexColorFormat _noHexColorOutputFormat = (i, _) => i;
 
-        private static readonly ColorFormat    _foregroundColorFormat    = (s, c) => _colorFormat(   s, c, _foregroundModifier);
-        private static readonly ColorFormatHex _foregroundColorHexFormat = (s, c) => _colorHexFormat(s, c, _foregroundModifier);
+        private static readonly ColorFormat    _foregroundColorFormat    = (i, c) => _colorFormat(   i, c, ColorPlane.Foreground);
+        private static readonly HexColorFormat _foregroundHexColorFormat = (i, c) => _colorHexFormat(i, c, ColorPlane.Foreground);
 
-        private static readonly ColorFormat    _backgroundColorFormat    = (s, c) => _colorFormat(   s, c, _backgroundModifier);
-        private static readonly ColorFormatHex _backgroundColorHexFormat = (s, c) => _colorHexFormat(s, c, _backgroundModifier);
+        private static readonly ColorFormat    _backgroundColorFormat    = (i, c) => _colorFormat(   i, c, ColorPlane.Background);
+        private static readonly HexColorFormat _backgroundHexColorFormat = (i, c) => _colorHexFormat(i, c, ColorPlane.Background);
 
 
-        private static ColorFormat    _foregroundColorFormatFunc;
-        private static ColorFormatHex _foregroundColorHexFormatFunc;
 
-        private static ColorFormat    _backgroundColorFormatFunc;
-        private static ColorFormatHex _backgroundColorHexFormatFunc;
+        private static readonly Dictionary<bool, Dictionary<ColorPlane, ColorFormat>>       _colorFormatFuncs = new Dictionary<bool, Dictionary<ColorPlane, ColorFormat>>
+        {
+            [false] = new Dictionary<ColorPlane, ColorFormat>
+            {
+                [ColorPlane.Foreground] = _noColorOutputFormat,
+                [ColorPlane.Background] = _noColorOutputFormat
+            },
+            [true]  = new Dictionary<ColorPlane, ColorFormat>
+            {
+                [ColorPlane.Foreground] = _foregroundColorFormat,
+                [ColorPlane.Background] = _backgroundColorFormat
+            }
+        };
+        private static readonly Dictionary<bool, Dictionary<ColorPlane, HexColorFormat>> _hexColorFormatFuncs = new Dictionary<bool, Dictionary<ColorPlane, HexColorFormat>>
+        {
+            [false] = new Dictionary<ColorPlane, HexColorFormat>
+            {
+                [ColorPlane.Foreground] = _noHexColorOutputFormat,
+                [ColorPlane.Background] = _noHexColorOutputFormat
+            },
+            [true]  = new Dictionary<ColorPlane, HexColorFormat>
+            {
+                [ColorPlane.Foreground] = _foregroundHexColorFormat,
+                [ColorPlane.Background] = _backgroundHexColorFormat
+            }
+        };
+
+        
 
 
         static ConsoleExtensions()
@@ -88,11 +144,7 @@
         /// </summary>
         public static void Enable()
         {
-            _foregroundColorFormatFunc    = _foregroundColorFormat;
-            _foregroundColorHexFormatFunc = _foregroundColorHexFormat;
-
-            _backgroundColorFormatFunc    = _backgroundColorFormat;
-            _backgroundColorHexFormatFunc = _backgroundColorHexFormat;
+            _enabled = true;
         }
 
         /// <summary>
@@ -100,11 +152,7 @@
         /// </summary>
         public static void Disable()
         {
-            _foregroundColorFormatFunc    = _noColorOutputFormat;
-            _foregroundColorHexFormatFunc = _noColorOutputHexFormat;
-
-            _backgroundColorFormatFunc    = _noColorOutputFormat;
-            _backgroundColorHexFormatFunc = _noColorOutputHexFormat;
+            _enabled = false;
         }
 
 
@@ -115,7 +163,7 @@
         /// <param name="color">The color to use on the specified string.</param>
         public static string Pastel(this string input, Color color)
         {
-            return _foregroundColorFormatFunc(input, color);
+            return _colorFormatFuncs[_enabled][ColorPlane.Foreground](input, color);
         }
 
         /// <summary>
@@ -125,7 +173,7 @@
         /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB.</para></param>
         public static string Pastel(this string input, string hexColor)
         {
-            return _foregroundColorHexFormatFunc(input, hexColor);
+            return _hexColorFormatFuncs[_enabled][ColorPlane.Foreground](input, hexColor);
         }
 
 
@@ -137,7 +185,7 @@
         /// <param name="color">The color to use on the specified string.</param>
         public static string PastelBg(this string input, Color color)
         {
-            return _backgroundColorFormatFunc(input, color);
+            return _colorFormatFuncs[_enabled][ColorPlane.Background](input, color);
         }
 
         /// <summary>
@@ -147,7 +195,19 @@
         /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB.</para></param>
         public static string PastelBg(this string input, string hexColor)
         {
-            return _backgroundColorHexFormatFunc(input, hexColor);
+            return _hexColorFormatFuncs[_enabled][ColorPlane.Background](input, hexColor);
+        }
+
+
+
+        private static string CloseNestedPastelStrings(string input, Color color, ColorPlane colorPlane)
+        {
+            var closedString = _closeNestedPastelStringRegex1.Replace(input, _formatStringEnd);
+
+                closedString = _closeNestedPastelStringRegex2.Replace(closedString, $"{_formatStringEnd}$1");
+                closedString = _closeNestedPastelStringRegex3[colorPlane].Replace(closedString, $"$1{string.Format($"{_formatStringStart}{_formatStringColor}", _planeFormatModifiers[colorPlane], color.R, color.G, color.B)}");
+
+            return closedString;
         }
     }
 }
