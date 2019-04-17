@@ -1,5 +1,7 @@
 # Pastel
 
+![logo](https://github.com/silkfire/Pastel/blob/master/img/logo.png)
+
 [![NuGet](https://img.shields.io/nuget/dt/Pastel.svg)](https://www.nuget.org/packages/Pastel)
 [![NuGet](https://img.shields.io/nuget/v/Pastel.svg)](https://www.nuget.org/packages/Pastel)
 
