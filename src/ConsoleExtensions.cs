@@ -5,28 +5,14 @@
     using System.Drawing;
     using System.Globalization;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using System.Text.RegularExpressions;
-
 
     public static class ConsoleExtensions
     {
-        private const int  STD_OUTPUT_HANDLE                     = -11;
-        private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
-        private const uint DISABLE_NEWLINE_AUTO_RETURN        = 0x0008;
 
-        [DllImport("kernel32.dll")]
-        private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+        private static bool _windowsConsoleSettingsApplied;
 
-        [DllImport("kernel32.dll")]
-        private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr GetStdHandle(int nStdHandle);
-
-        [DllImport("kernel32.dll")]
-        public static extern uint GetLastError();
-
+        public static bool AutoApplyWindowsConsoleSettings { get; set; } = true;
 
         private static bool _enabled;
 
@@ -52,8 +38,6 @@
             [ColorPlane.Background] = "48"
         };
 
-
-
         private static readonly Regex  _closeNestedPastelStringRegex1 = new Regex($"({_formatStringEnd.Replace("[", @"\[")})+");
         private static readonly Regex  _closeNestedPastelStringRegex2 = new Regex($"(?<!^)(?<!{_formatStringEnd.Replace("[", @"\[")})(?<!{string.Format($"{_formatStringStart.Replace("[", @"\[")}{_formatStringColor}", new[] { $"(?:{_planeFormatModifiers[ColorPlane.Foreground]}|{_planeFormatModifiers[ColorPlane.Background]})" }.Concat(Enumerable.Repeat(@"\d{1,3}", 3)).Cast<object>().ToArray())})({string.Format(_formatStringStart.Replace("[", @"\["), $"(?:{_planeFormatModifiers[ColorPlane.Foreground]}|{_planeFormatModifiers[ColorPlane.Background]})")})");
 
@@ -62,9 +46,6 @@
             [ColorPlane.Foreground] = new Regex($"({_formatStringEnd.Replace("[", @"\[")})(?!{string.Format(_formatStringStart.Replace("[", @"\["), _planeFormatModifiers[ColorPlane.Foreground])})(?!$)"),
             [ColorPlane.Background] = new Regex($"({_formatStringEnd.Replace("[", @"\[")})(?!{string.Format(_formatStringStart.Replace("[", @"\["), _planeFormatModifiers[ColorPlane.Background])})(?!$)")
         };
-
-
-
 
         private static readonly Func<string, int> _parseHexColor = hc => int.Parse(hc.Replace("#", ""), NumberStyles.HexNumber);
 
@@ -79,8 +60,6 @@
 
         private static readonly ColorFormat    _backgroundColorFormat    = (i, c) => _colorFormat(   i, c, ColorPlane.Background);
         private static readonly HexColorFormat _backgroundHexColorFormat = (i, c) => _colorHexFormat(i, c, ColorPlane.Background);
-
-
 
         private static readonly Dictionary<bool, Dictionary<ColorPlane, ColorFormat>>       _colorFormatFuncs = new Dictionary<bool, Dictionary<ColorPlane, ColorFormat>>
         {
@@ -109,20 +88,8 @@
             }
         };
 
-        
-
-
         static ConsoleExtensions()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                var iStdOut =   GetStdHandle(STD_OUTPUT_HANDLE);
-
-                var enable  =   GetConsoleMode(iStdOut, out var outConsoleMode)
-                             && SetConsoleMode(iStdOut, outConsoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN);
-            }
-
-
             if (Environment.GetEnvironmentVariable("NO_COLOR") == null)
             {
                 Enable();
@@ -132,12 +99,6 @@
                 Disable();
             }
         }
-
-
-        
-
-
-
 
         /// <summary>
         /// Enables any future console color output produced by Pastel.
@@ -155,7 +116,6 @@
             _enabled = false;
         }
 
-
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
@@ -163,6 +123,7 @@
         /// <param name="color">The color to use on the specified string.</param>
         public static string Pastel(this string input, Color color)
         {
+            ApplyWindowsWorkaroundIfNeeded();
             return _colorFormatFuncs[_enabled][ColorPlane.Foreground](input, color);
         }
 
@@ -173,10 +134,9 @@
         /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB.</para></param>
         public static string Pastel(this string input, string hexColor)
         {
+            ApplyWindowsWorkaroundIfNeeded();
             return _hexColorFormatFuncs[_enabled][ColorPlane.Foreground](input, hexColor);
         }
-
-
 
         /// <summary>
         /// Returns a string wrapped in an ANSI background color code using the specified color.
@@ -185,6 +145,7 @@
         /// <param name="color">The color to use on the specified string.</param>
         public static string PastelBg(this string input, Color color)
         {
+            ApplyWindowsWorkaroundIfNeeded();
             return _colorFormatFuncs[_enabled][ColorPlane.Background](input, color);
         }
 
@@ -195,10 +156,18 @@
         /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB.</para></param>
         public static string PastelBg(this string input, string hexColor)
         {
+            ApplyWindowsWorkaroundIfNeeded();
             return _hexColorFormatFuncs[_enabled][ColorPlane.Background](input, hexColor);
         }
 
-
+        private static void ApplyWindowsWorkaroundIfNeeded()
+        {
+            if (!_windowsConsoleSettingsApplied && AutoApplyWindowsConsoleSettings)
+            {
+                WindowsWorkarounds.Apply();
+                _windowsConsoleSettingsApplied = true;
+            }
+        }
 
         private static string CloseNestedPastelStrings(string input, Color color, ColorPlane colorPlane)
         {
