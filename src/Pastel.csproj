@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Users\Gabriel\Documents\Visual Studio 2017\Projects\2018\Pastel\src\Pastel.xml</DocumentationFile>
+    <DocumentationFile>./Pastel.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>
