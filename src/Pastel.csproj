@@ -1,21 +1,28 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Company>Gabriel Bider</Company>
     <Authors>Gabriel Bider</Authors>
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
-    <PackageLicenseUrl>https://github.com/silkfire/Pastel/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <PackageTags>console colors ansi colorize NO_COLOR</PackageTags>
-    <Version>1.3.0</Version>
-    <AssemblyVersion>1.3.0.0</AssemblyVersion>
-    <PackageReleaseNotes>1.3.0 Added support for nested coloring</PackageReleaseNotes>
+    <Version>1.3.1</Version>
+    <AssemblyVersion>1.3.1.0</AssemblyVersion>
+    <PackageReleaseNotes>1.3.1 Fixed bug that could occur when printing newlines</PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/silkfire/Pastel/master/img/logo.png</PackageIconUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>./Pastel.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
