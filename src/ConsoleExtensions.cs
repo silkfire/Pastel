@@ -9,6 +9,9 @@
     using System.Text.RegularExpressions;
 
 
+    /// <summary>
+    /// Controls colored console output by <see langword="Pastel"/>.
+    /// </summary>
     public static class ConsoleExtensions
     {
         private const int  STD_OUTPUT_HANDLE                     = -11;
@@ -22,9 +25,6 @@
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr GetStdHandle(int nStdHandle);
-
-        [DllImport("kernel32.dll")]
-        public static extern uint GetLastError();
 
 
         private static bool _enabled;
