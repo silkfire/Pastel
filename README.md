@@ -2,8 +2,8 @@
 
 ![logo](https://github.com/silkfire/Pastel/blob/master/img/logo.png)
 
-[![NuGet](https://img.shields.io/nuget/v/Pastel.svg)](https://www.nuget.org/packages/Pastel)
 [![NuGet](https://img.shields.io/nuget/dt/Pastel.svg)](https://www.nuget.org/packages/Pastel)
+[![NuGet](https://img.shields.io/nuget/v/Pastel.svg)](https://www.nuget.org/packages/Pastel)
 
 Give your console app a nicer look by adding some color to the output it produces. 
 This is achieved by wrapping strings of the output in [ANSI codes](https://www.jerriepelser.com/blog/using-ansi-color-codes-in-net-console-apps/) that instruct the terminal to color the string based on the interpreted code. Tested on both Windows (requires at least Windows 10, v1511 [November Update]) and Linux.
@@ -59,7 +59,7 @@ Using a `Color` argument pairs very well with ReSharper as the extension automat
 
 ## Background colors
 
-Pastel now also supports background colors. The syntax is exactly the same except that the method is called `PastelBg`. Both foreground and background colors can be combined by chaining the methods:
+Pastel also supports background colors. The syntax is exactly the same except that the method is called `PastelBg`. Both foreground and background colors can be combined by chaining the methods:
 
 ```cs
 "Colorize me".Pastel(Color.Black).PastelBg("FFD000");
