@@ -59,7 +59,8 @@ Using a `Color` argument pairs very well with ReSharper as the extension automat
 
 ## Background colors
 
-Pastel also supports background colors. The syntax is exactly the same except that the method is called `PastelBg`. Both foreground and background colors can be combined by chaining the methods:
+Pastel also supports background colors. The syntax is exactly the same except that the method is called `PastelBg`.  
+Both foreground and background colors can be combined by chaining the methods:
 
 ```cs
 "Colorize me".Pastel(Color.Black).PastelBg("FFD000");
