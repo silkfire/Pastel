@@ -28,7 +28,7 @@ Console.WriteLine($"Press {"ENTER".Pastel(Color.FromArgb(165, 229, 250))} to con
 ![Example 1](https://github.com/silkfire/Pastel/blob/master/img/example1.png)
 
 You can either use a `System.Drawing.Color` object or a hexadecimal string value.  
-Both upper and lower case hex codes are supported and the pound sign (#) is optional. 
+Both upper and lower case hex codes are supported and the leading number sign (#) is optional. 
 
 
 ```cs
