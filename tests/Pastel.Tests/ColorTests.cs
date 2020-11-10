@@ -162,7 +162,7 @@ namespace Pastel.Tests
             private const string _input = "input";
 
 
-            private void ColorOutputEnabledTest()
+            private static void ColorOutputEnabledTest()
             {
                 ConsoleExtensions.Enable();
 
