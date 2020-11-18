@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
     <Authors>Gabriel Bider</Authors>
     <PackageTags>console colors ansi colorize NO_COLOR</PackageTags>
     <Copyright>Copyright © 2020</Copyright>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
-    <Version>2.0.0</Version>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <PackageReleaseNotes>2.0.0 Now only supports .NET 5</PackageReleaseNotes>
+    <Version>2.1.0</Version>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <PackageReleaseNotes>2.1.0 Performance improvements</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>
