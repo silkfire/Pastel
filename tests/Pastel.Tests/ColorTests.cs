@@ -2,7 +2,6 @@ namespace Pastel.Tests
 {
     using Xunit;
 
-    using System;
     using System.Drawing;
 
 
