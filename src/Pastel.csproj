@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <Authors>Gabriel Bider</Authors>
-    <PackageTags>console colors ansi colorize NO_COLOR</PackageTags>
+    <PackageTags>console colour color colors colours colourful colorful colourize colorize ansi NO_COLOR</PackageTags>
     <Copyright>Copyright © 2022</Copyright>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
-    <Version>3.0.0</Version>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <Version>3.0.1</Version>
+    <AssemblyVersion>3.0.1.0</AssemblyVersion>
     <PackageReleaseNotes>3.0.0 Target .NET 6</PackageReleaseNotes>
   </PropertyGroup>
 
