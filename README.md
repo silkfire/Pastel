@@ -1,6 +1,6 @@
 # Pastel
 
-![logo](https://github.com/silkfire/Pastel/blob/master/img/logo.png)
+![logo](https://raw.githubusercontent.com/silkfire/Pastel/master/img/logo.png)
 
 [![NuGet](https://img.shields.io/nuget/dt/Pastel.svg)](https://www.nuget.org/packages/Pastel)
 [![NuGet](https://img.shields.io/nuget/v/Pastel.svg)](https://www.nuget.org/packages/Pastel)
@@ -25,7 +25,7 @@ The basic syntax is very simple. Use the `Pastel()` method on the string you wan
 
 Console.WriteLine($"Press {"ENTER".Pastel(Color.FromArgb(165, 229, 250))} to continue");
 ```
-![Example 1](https://github.com/silkfire/Pastel/blob/master/img/example1.png)
+![Example 1](https://raw.githubusercontent.com/silkfire/Pastel/master/img/example1.png)
 
 You can either use a `System.Drawing.Color` object or a hexadecimal string value.  
 Both upper and lower case hex codes are supported and the leading number sign (#) is optional. 
@@ -48,13 +48,13 @@ var spectrum = new (string color, string letter)[]
 
 Console.WriteLine(string.Join("", spectrum.Select(s => s.letter.Pastel(s.color))));
 ```
-![Example 2](https://github.com/silkfire/Pastel/blob/master/img/example2.png)  
+![Example 2](https://raw.githubusercontent.com/silkfire/Pastel/master/img/example2.png)  
 
-![Example 3](https://github.com/silkfire/Pastel/blob/master/img/example3.png)
+![Example 3](https://raw.githubusercontent.com/silkfire/Pastel/master/img/example3.png)
 
 Using a `Color` argument pairs very well with ReSharper as the extension automatically underlines the argument list and colors it accordingly:
 
-![ReSharper color object underlining](https://github.com/silkfire/Pastel/blob/master/img/resharper-coloring.png)
+![ReSharper color object underlining](https://raw.githubusercontent.com/silkfire/Pastel/master/img/resharper-coloring.png)
 
 
 ## Background colors
@@ -66,7 +66,7 @@ Both foreground and background colors can be combined by chaining the methods:
 "Colorize me".Pastel(Color.Black).PastelBg("FFD000");
 ```
 
-![Example 4](https://github.com/silkfire/Pastel/blob/master/img/example4.png)
+![Example 4](https://raw.githubusercontent.com/silkfire/Pastel/master/img/example4.png)
 
 ## Disabling / enabling color output
 
