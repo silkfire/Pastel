@@ -7,12 +7,9 @@
     <Copyright>Copyright © 2022</Copyright>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
-    <Version>4.0.2</Version>
-    <AssemblyVersion>4.0.2.0</AssemblyVersion>
-    <PackageReleaseNotes>v4.0.2
-
-- Target .NET 6/7 and .NET Framework 4.6.2
-- Performance improvements for .NET 7</PackageReleaseNotes>
+    <Version>4.1.0</Version>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <PackageReleaseNotes>v4.1.0 Added support for ConsoleColor arguments</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net7.0' ">

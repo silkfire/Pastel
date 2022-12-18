@@ -56,6 +56,25 @@ namespace Pastel
 
         private static bool _enabled;
 
+        private static readonly ReadOnlyDictionary<ConsoleColor, Color> _consoleColorMapper = new ReadOnlyDictionary<ConsoleColor, Color> (new Dictionary<ConsoleColor, Color> {
+                                                                                                                                              [ConsoleColor.Black]       = Color.FromArgb(0x000000),
+                                                                                                                                              [ConsoleColor.DarkBlue]    = Color.FromArgb(0x00008B),
+                                                                                                                                              [ConsoleColor.DarkGreen]   = Color.FromArgb(0x006400),
+                                                                                                                                              [ConsoleColor.DarkCyan]    = Color.FromArgb(0x008B8B),
+                                                                                                                                              [ConsoleColor.DarkRed]     = Color.FromArgb(0x8B0000),
+                                                                                                                                              [ConsoleColor.DarkMagenta] = Color.FromArgb(0x8B008B),
+                                                                                                                                              [ConsoleColor.DarkYellow]  = Color.FromArgb(0x808000),
+                                                                                                                                              [ConsoleColor.Gray]        = Color.FromArgb(0x808080),
+                                                                                                                                              [ConsoleColor.DarkGray]    = Color.FromArgb(0xA9A9A9),
+                                                                                                                                              [ConsoleColor.Blue]        = Color.FromArgb(0x0000FF),
+                                                                                                                                              [ConsoleColor.Green]       = Color.FromArgb(0x008000),
+                                                                                                                                              [ConsoleColor.Cyan]        = Color.FromArgb(0x00FFFF),
+                                                                                                                                              [ConsoleColor.Red]         = Color.FromArgb(0xFF0000),
+                                                                                                                                              [ConsoleColor.Magenta]     = Color.FromArgb(0xFF00FF),
+                                                                                                                                              [ConsoleColor.Yellow]      = Color.FromArgb(0xFFFF00),
+                                                                                                                                              [ConsoleColor.White]       = Color.FromArgb(0xFFFFFF)
+                                                                                                                                           });
+
         private delegate string ColorFormat(   string input, Color     color);
         private delegate string HexColorFormat(string input, string hexColor);
 
@@ -212,6 +231,16 @@ namespace Pastel
         {
             return _colorFormatFuncs[_enabled][ColorPlane.Foreground](input, color);
         }
+        
+        /// <summary>
+        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="color">The color to use on the specified string.</param>
+        public static string Pastel(this string input, ConsoleColor color)
+        {
+            return Pastel(input, _consoleColorMapper[color]);
+        }
 
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
@@ -233,6 +262,16 @@ namespace Pastel
         public static string PastelBg(this string input, Color color)
         {
             return _colorFormatFuncs[_enabled][ColorPlane.Background](input, color);
+        }
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI background color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="color">The color to use on the specified string.</param>
+        public static string PastelBg(this string input, ConsoleColor color)
+        {
+            return PastelBg(input, _consoleColorMapper[color]);
         }
 
         /// <summary>

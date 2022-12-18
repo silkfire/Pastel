@@ -2,6 +2,7 @@ namespace Pastel.Tests
 {
     using Xunit;
 
+    using System;
     using System.Drawing;
 
 
@@ -161,52 +162,131 @@ namespace Pastel.Tests
         {
             private const string _input = "input";
 
-
-            private static void ColorOutputEnabledTest()
+            private static void ColorOutputEnabledTest(string expectedAnsiColorCodePart, string outputAnsiColorString1, string outputAnsiColorString2)
             {
-                var outputAnsiColorString1 = _input.Pastel(  Color.FromArgb(1, 1, 1));
-                var outputAnsiColorString2 = _input.Pastel(  "#010101");
-                var outputAnsiColorString3 = _input.PastelBg(Color.FromArgb(1, 1, 1));
-                var outputAnsiColorString4 = _input.PastelBg("#010101");
-
-                Assert.Equal($"\u001b[38;2;1;1;1m{_input}\u001b[0m", outputAnsiColorString1);
-                Assert.Equal($"\u001b[38;2;1;1;1m{_input}\u001b[0m", outputAnsiColorString2);
-                Assert.Equal($"\u001b[48;2;1;1;1m{_input}\u001b[0m", outputAnsiColorString3);
-                Assert.Equal($"\u001b[48;2;1;1;1m{_input}\u001b[0m", outputAnsiColorString4);
+                Assert.Equal($"\u001b[38;2;{expectedAnsiColorCodePart}m{_input}\u001b[0m", outputAnsiColorString1);
+                Assert.Equal($"\u001b[48;2;{expectedAnsiColorCodePart}m{_input}\u001b[0m", outputAnsiColorString2);
             }
 
-            private static void ColorOutputDisabledTest()
+            private static void ColorOutputEnabledTestColor(Color color, string expectedAnsiColorCodePart)
             {
-                var outputAnsiColorString1 = _input.Pastel(Color.FromArgb(1, 1, 1));
-                var outputAnsiColorString2 = _input.Pastel("#010101");
-                var outputAnsiColorString3 = _input.PastelBg(Color.FromArgb(1, 1, 1));
-                var outputAnsiColorString4 = _input.PastelBg("#010101");
+                var outputAnsiColorString1 = _input.Pastel(  color);
+                var outputAnsiColorString2 = _input.PastelBg(color);
 
+                ColorOutputEnabledTest(expectedAnsiColorCodePart, outputAnsiColorString1, outputAnsiColorString2);
+            }
+
+            private static void ColorOutputEnabledTestConsoleColor(ConsoleColor color, string expectedAnsiColorCodePart)
+            {
+                var outputAnsiColorString1 = _input.Pastel(  color);
+                var outputAnsiColorString2 = _input.PastelBg(color);
+
+                ColorOutputEnabledTest(expectedAnsiColorCodePart, outputAnsiColorString1, outputAnsiColorString2);
+            }
+
+            private static void ColorOutputEnabledTestHexColor(string color, string expectedAnsiColorCodePart)
+            {
+                var outputAnsiColorString1 = _input.Pastel(  color);
+                var outputAnsiColorString2 = _input.PastelBg(color);
+
+                ColorOutputEnabledTest(expectedAnsiColorCodePart, outputAnsiColorString1, outputAnsiColorString2);
+            }
+
+
+
+            private static void ColorOutputDisabledTest(string outputAnsiColorString1, string outputAnsiColorString2)
+            {
                 Assert.Equal(_input, outputAnsiColorString1);
                 Assert.Equal(_input, outputAnsiColorString2);
-                Assert.Equal(_input, outputAnsiColorString3);
-                Assert.Equal(_input, outputAnsiColorString4);
+            }
+
+            private static void ColorOutputDisabledTestColor(Color color)
+            {
+                var outputAnsiColorString1 = _input.Pastel(  color);
+                var outputAnsiColorString2 = _input.PastelBg(color);
+
+                ColorOutputDisabledTest(outputAnsiColorString1, outputAnsiColorString2);
+            }
+
+            private static void ColorOutputDisabledTestConsoleColor(ConsoleColor color)
+            {
+                var outputAnsiColorString1 = _input.Pastel(  color);
+                var outputAnsiColorString2 = _input.PastelBg(color);
+
+                ColorOutputDisabledTest(outputAnsiColorString1, outputAnsiColorString2);
+            }
+
+            private static void ColorOutputDisabledTestHexColor(string color)
+            {
+                var outputAnsiColorString1 = _input.Pastel(  color);
+                var outputAnsiColorString2 = _input.PastelBg(color);
+
+                ColorOutputDisabledTest(outputAnsiColorString1, outputAnsiColorString2);
             }
 
             [Fact]
             public void Output_Should_Honor_Current_State_When_Switching_Between_States()
             {
+                var color = Color.FromArgb(1, 1, 1);
+                const string hexColor = "#010101";
+                const string expectedAnsiColorCodePart = "1;1;1";
+
                 // Enable color output
 
                 ConsoleExtensions.Enable();
-                ColorOutputEnabledTest();
+                ColorOutputEnabledTestColor(color, expectedAnsiColorCodePart);
+                ColorOutputEnabledTestHexColor(hexColor, expectedAnsiColorCodePart);
 
 
                 // Disable color output
 
                 ConsoleExtensions.Disable();
-                ColorOutputDisabledTest();
+                ColorOutputDisabledTestColor(color);
+                ColorOutputDisabledTestHexColor(hexColor);
 
 
                 // Re-enable color output
 
                 ConsoleExtensions.Enable();
-                ColorOutputEnabledTest();
+                ColorOutputEnabledTestColor(color, expectedAnsiColorCodePart);
+                ColorOutputEnabledTestHexColor(hexColor, expectedAnsiColorCodePart);
+            }
+
+            [Theory]
+            [InlineData(ConsoleColor.Black,       "0;0;0")]
+            [InlineData(ConsoleColor.DarkBlue,    "0;0;139")]
+            [InlineData(ConsoleColor.DarkGreen,   "0;100;0")]
+            [InlineData(ConsoleColor.DarkCyan,    "0;139;139")]
+            [InlineData(ConsoleColor.DarkRed,     "139;0;0")]
+            [InlineData(ConsoleColor.DarkMagenta, "139;0;139")]
+            [InlineData(ConsoleColor.DarkYellow,  "128;128;0")]
+            [InlineData(ConsoleColor.Gray,        "128;128;128")]
+            [InlineData(ConsoleColor.DarkGray,    "169;169;169")]
+            [InlineData(ConsoleColor.Blue,        "0;0;255")]
+            [InlineData(ConsoleColor.Green,       "0;128;0")]
+            [InlineData(ConsoleColor.Cyan,        "0;255;255")]
+            [InlineData(ConsoleColor.Red,         "255;0;0")]
+            [InlineData(ConsoleColor.Magenta,     "255;0;255")]
+            [InlineData(ConsoleColor.Yellow,      "255;255;0")]
+            [InlineData(ConsoleColor.White,       "255;255;255")]
+            public void Output_Should_Honor_Current_State_When_Switching_Between_States_ConsoleColor(ConsoleColor color, string expectedAnsiColorCodePart)
+            {
+                // Enable color output
+
+                ConsoleExtensions.Enable();
+                ColorOutputEnabledTestConsoleColor(color, expectedAnsiColorCodePart);
+
+
+                // Disable color output
+
+                ConsoleExtensions.Disable();
+                ColorOutputDisabledTestConsoleColor(color);
+
+
+                // Re-enable color output
+
+                ConsoleExtensions.Enable();
+                ColorOutputEnabledTestConsoleColor(color, expectedAnsiColorCodePart);
             }
         }
     }
