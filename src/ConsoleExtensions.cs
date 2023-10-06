@@ -56,7 +56,7 @@ namespace Pastel
 
         private static bool _enabled;
 
-        private static readonly ReadOnlyDictionary<ConsoleColor, Color> _consoleColorMapper = new ReadOnlyDictionary<ConsoleColor, Color> (new Dictionary<ConsoleColor, Color> {
+        private static readonly IReadOnlyDictionary<ConsoleColor, Color> _consoleColorMapper = new ReadOnlyDictionary<ConsoleColor, Color> (new Dictionary<ConsoleColor, Color> {
                                                                                                                                               [ConsoleColor.Black]       = Color.FromArgb(0x000000),
                                                                                                                                               [ConsoleColor.DarkBlue]    = Color.FromArgb(0x00008B),
                                                                                                                                               [ConsoleColor.DarkGreen]   = Color.FromArgb(0x006400),
@@ -99,7 +99,7 @@ namespace Pastel
         private static readonly string _closeNestedPastelStringRegex3FormatString = $"(?:{_formatStringEnd.Replace("[", @"\[")})(?!{_formatStringStart.Replace("[", @"\[")})(?!$)";
 #endif
 
-        private static readonly ReadOnlyDictionary<ColorPlane, string> _planeFormatModifiers = new ReadOnlyDictionary<ColorPlane, string>(new Dictionary<ColorPlane, string>
+        private static readonly IReadOnlyDictionary<ColorPlane, string> _planeFormatModifiers = new ReadOnlyDictionary<ColorPlane, string>(new Dictionary<ColorPlane, string>
                                                                                                {
                                                                                                    [ColorPlane.Foreground] = "38",
                                                                                                    [ColorPlane.Background] = "48"
@@ -130,7 +130,7 @@ namespace Pastel
 
         private static Regex CloseNestedPastelStringRegex2() => _closeNestedPastelStringRegex2;
 
-        private static readonly ReadOnlyDictionary<ColorPlane, Regex> _closeNestedPastelStringRegex3 = new ReadOnlyDictionary<ColorPlane, Regex>(new[] { ColorPlane.Foreground, ColorPlane.Background }.ToDictionary(p => p,
+        private static readonly IReadOnlyDictionary<ColorPlane, Regex> _closeNestedPastelStringRegex3 = new ReadOnlyDictionary<ColorPlane, Regex>(new[] { ColorPlane.Foreground, ColorPlane.Background }.ToDictionary(p => p,
                                                                                                                                                                                                                      p => new Regex(string.Format(_closeNestedPastelStringRegex3FormatString, _planeFormatModifiers[p]), RegexOptions.Compiled)));
 #endif
 
@@ -152,7 +152,7 @@ namespace Pastel
 
 
 
-        private static readonly ReadOnlyDictionary<bool, ReadOnlyDictionary<ColorPlane, ColorFormat>>       _colorFormatFuncs = new ReadOnlyDictionary<bool, ReadOnlyDictionary<ColorPlane, ColorFormat>>(new Dictionary<bool, ReadOnlyDictionary<ColorPlane, ColorFormat>>
+        private static readonly IReadOnlyDictionary<bool, ReadOnlyDictionary<ColorPlane, ColorFormat>>       _colorFormatFuncs = new ReadOnlyDictionary<bool, ReadOnlyDictionary<ColorPlane, ColorFormat>>(new Dictionary<bool, ReadOnlyDictionary<ColorPlane, ColorFormat>>
                                                                                                                                 {
                                                                                                                                     [false] = new ReadOnlyDictionary<ColorPlane, ColorFormat>(new Dictionary<ColorPlane, ColorFormat>
                                                                                                                                                                                               {
@@ -165,7 +165,7 @@ namespace Pastel
                                                                                                                                                                                                  [ColorPlane.Background] = _backgroundColorFormat
                                                                                                                                                                                              })
                                                                                                                                 });
-        private static readonly ReadOnlyDictionary<bool, ReadOnlyDictionary<ColorPlane, HexColorFormat>> _hexColorFormatFuncs = new ReadOnlyDictionary<bool, ReadOnlyDictionary<ColorPlane, HexColorFormat>>(new Dictionary<bool, ReadOnlyDictionary<ColorPlane, HexColorFormat>>
+        private static readonly IReadOnlyDictionary<bool, ReadOnlyDictionary<ColorPlane, HexColorFormat>> _hexColorFormatFuncs = new ReadOnlyDictionary<bool, ReadOnlyDictionary<ColorPlane, HexColorFormat>>(new Dictionary<bool, ReadOnlyDictionary<ColorPlane, HexColorFormat>>
                                                                                                                                 {
                                                                                                                                     [false] = new ReadOnlyDictionary<ColorPlane, HexColorFormat>(new Dictionary<ColorPlane, HexColorFormat>
                                                                                                                                                                                                  {
