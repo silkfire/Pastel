@@ -192,13 +192,13 @@ namespace Pastel
             }
 
 
-            if (Environment.GetEnvironmentVariable("NO_COLOR") == null)
+            if (EnvironmentDetector.ColorsDisabled)
             {
-                Enable();
+                Disable();
             }
             else
             {
-                Disable();
+                Enable();
             }
         }
 
