@@ -179,7 +179,7 @@ namespace Pastel
                                                                                                                                                                                                 })
                                                                                                                                 });
 
-        
+
 
 
         static ConsoleExtensions()
@@ -231,7 +231,7 @@ namespace Pastel
         {
             return _colorFormatFuncs[_enabled][ColorPlane.Foreground](input, color);
         }
-        
+
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
@@ -292,7 +292,7 @@ namespace Pastel
 
             closedString = CloseNestedPastelStringRegex2().Replace(closedString, $"{_formatStringEnd}$0");
             closedString = _closeNestedPastelStringRegex3[colorPlane].Replace(closedString, $"$0{string.Format(_formatStringPartial, _planeFormatModifiers[colorPlane], color.R, color.G, color.B)}");
-            
+
             return closedString;
         }
     }

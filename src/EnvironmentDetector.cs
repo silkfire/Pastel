@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,18 +12,16 @@ namespace Pastel
         /// <summary>
         /// Returns true if the environment variables indicate that colors should be disabled.
         /// </summary>
-        public static bool ColorsDisabled => HasEnvironmentVariable((key, value) => _environmentVariableDetectors.Any(x => x(key, value)));
+        public static bool ColorsDisabled => HasEnvironmentVariable((key, value) => s_environmentVariableDetectors.Any(evd => evd(key, value)));
 
-        private static Func<string, string, bool>[] _environmentVariableDetectors = new Func<string, string, bool>[]
-        {
-            IsBitbucketEnvironmentVariableKey,
-            IsTeamCityEnvironmentVariableKey,
-            NoColor,
-            IsGitHubAction,
-            IsCI,
-            IsJenkins,
-            IsTeamCity
-        };
+        private static readonly Func<string, string, bool>[] s_environmentVariableDetectors = {
+                                                                                                 IsBitbucketEnvironmentVariableKey,
+                                                                                                 IsTeamCityEnvironmentVariableKey,
+                                                                                                 NoColor,
+                                                                                                 IsGitHubAction,
+                                                                                                 IsCI,
+                                                                                                 IsJenkins
+                                                                                             };
 
         private static bool IsBitbucketEnvironmentVariableKey(string key, string value)
         {
@@ -56,20 +53,13 @@ namespace Pastel
                 || value.Equals("1", StringComparison.OrdinalIgnoreCase));
         }
 
-        //isjenkins
+        // Detect Jenkins enviroment
         private static bool IsJenkins(string key, string value)
         {
             return key.StartsWith("JENKINS_URL", StringComparison.OrdinalIgnoreCase);
         }
 
-
-        // is TEAMCITY_VERSION 
-        private static bool IsTeamCity(string key, string value)
-        {
-            return key.StartsWith("TEAMCITY_VERSION", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static bool HasEnvironmentVariable(Func<string, string, bool> predicate)
+        private static bool HasEnvironmentVariable(Func<string, string, bool> environmentDetectorPredicate)
         {
             var processKeys = EnumerateEnvironmentVariables(EnvironmentVariableTarget.Process);
             var userKeys = EnumerateEnvironmentVariables(EnvironmentVariableTarget.User);
@@ -78,25 +68,14 @@ namespace Pastel
             return processKeys
                 .Concat(userKeys)
                 .Concat(machineKeys)
-                .Any(x => predicate(x.Key, x.Value));
+                .Any(kvp => environmentDetectorPredicate(kvp.Key, kvp.Value));
         }
 
-        private static IEnumerable<KeyValuePair> EnumerateEnvironmentVariables(EnvironmentVariableTarget target)
+        private static IEnumerable<KeyValuePair<string, string>> EnumerateEnvironmentVariables(EnvironmentVariableTarget target)
         {
             foreach (var entry in Environment.GetEnvironmentVariables(target).OfType<DictionaryEntry>())
             {
-                yield return new KeyValuePair(entry.Key.ToString(), entry.Value?.ToString() ?? string.Empty);
-            }
-        }
-        private struct KeyValuePair
-        {
-            public string Key { get; set; }
-            public string Value { get; set; }
-
-            public KeyValuePair(string key, string value)
-            {
-                Key = key;
-                Value = value;
+                yield return new KeyValuePair<string, string>(entry.Key.ToString(), entry.Value?.ToString() ?? string.Empty);
             }
         }
     }
