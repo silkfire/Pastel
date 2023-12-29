@@ -6,7 +6,7 @@
 [![NuGet](https://img.shields.io/nuget/v/Pastel.svg)](https://www.nuget.org/packages/Pastel)
 
 Give your console app a nicer look by adding some color to the output it produces. 
-This is achieved by wrapping strings of the output in [ANSI codes](https://www.jerriepelser.com/blog/using-ansi-color-codes-in-net-console-apps/) that instruct the terminal to color the string based on the interpreted code. Tested on both Windows (requires at least Windows 10, v1511 [November Update]) and Linux.
+This is achieved by wrapping strings of the output in [ANSI escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code) that instruct the terminal to color the string based on the interpreted code. Tested on both Windows (requires at least Windows 10, v1511 [November Update]) and Linux.
 
 ## Introduction
 
