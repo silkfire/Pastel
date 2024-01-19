@@ -10,7 +10,7 @@ namespace Pastel
     internal static class EnvironmentDetector
     {
         /// <summary>
-        /// Returns true if the environment variables indicate that colors should be disabled.
+        /// Returns <see langword="true"/> if at least one of a predefined set of environment variables are set. These environment variables could e.g. indicate that the application is running in a CI/CD environment.
         /// </summary>
         public static bool ColorsDisabled => HasEnvironmentVariable((key, value) => s_environmentVariableDetectors.Any(evd => evd(key, value)));
 

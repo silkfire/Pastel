@@ -7,14 +7,14 @@ namespace Pastel.Tests
     using System;
     using System.Drawing;
 
-
     public class ColorTests
     {
         public class ForegroundColor
         {
             [Theory]
-            [InlineData(1,   1,   1, "input", "\u001b[38;2;1;1;1minput\u001b[0m")]
-            [InlineData(44, 70, 125, "input", "\u001b[38;2;44;70;125minput\u001b[0m")]
+            [InlineData(3,  40, 255, "", "\x1b[38;2;3;40;255m\x1b[0m")]
+            [InlineData(1,   1,   1, "input", "\x1b[38;2;1;1;1minput\x1b[0m")]
+            [InlineData(44, 70, 125, "input", "\x1b[38;2;44;70;125minput\x1b[0m")]
             public void Given_Specified_RGB_Color_And_Input_String_Should_Return_Specified_String(int red, int green, int blue, string inputString, string expectedAnsiColorString)
             {
                 var outputAnsiColorString = inputString.Pastel(Color.FromArgb(red, green, blue));
@@ -23,11 +23,12 @@ namespace Pastel.Tests
             }
 
             [Theory]
-            [InlineData("#010101", "input", "\u001b[38;2;1;1;1minput\u001b[0m")]
-            [InlineData("#DDDDDD", "input", "\u001b[38;2;221;221;221minput\u001b[0m")]
-            [InlineData("#dDdDdD", "input", "\u001b[38;2;221;221;221minput\u001b[0m")]
-            [InlineData("#C2985D", "input", "\u001b[38;2;194;152;93minput\u001b[0m")]
-            [InlineData("#aaaaaa", "input", "\u001b[38;2;170;170;170minput\u001b[0m")]
+            [InlineData("#0328ff",      "", "\x1b[38;2;3;40;255m\x1b[0m")]
+            [InlineData("#010101", "input", "\x1b[38;2;1;1;1minput\x1b[0m")]
+            [InlineData("#DDDDDD", "input", "\x1b[38;2;221;221;221minput\x1b[0m")]
+            [InlineData("#dDdDdD", "input", "\x1b[38;2;221;221;221minput\x1b[0m")]
+            [InlineData("#C2985D", "input", "\x1b[38;2;194;152;93minput\x1b[0m")]
+            [InlineData("#aaaaaa", "input", "\x1b[38;2;170;170;170minput\x1b[0m")]
             public void Given_Specified_Hex_Color_String_And_Input_String_Should_Return_Specified_String(string hexColor, string inputString, string expectedAnsiColorString)
             {
                 var outputAnsiColorString = inputString.Pastel(hexColor);
@@ -37,11 +38,12 @@ namespace Pastel.Tests
 
 
             [Theory]
-            [InlineData("010101", "input", "\u001b[38;2;1;1;1minput\u001b[0m")]
-            [InlineData("DDDDDD", "input", "\u001b[38;2;221;221;221minput\u001b[0m")]
-            [InlineData("dDdDdD", "input", "\u001b[38;2;221;221;221minput\u001b[0m")]
-            [InlineData("C2985D", "input", "\u001b[38;2;194;152;93minput\u001b[0m")]
-            [InlineData("aaaaaa", "input", "\u001b[38;2;170;170;170minput\u001b[0m")]
+            [InlineData("0328ff",      "", "\x1b[38;2;3;40;255m\x1b[0m")]
+            [InlineData("010101", "input", "\x1b[38;2;1;1;1minput\x1b[0m")]
+            [InlineData("DDDDDD", "input", "\x1b[38;2;221;221;221minput\x1b[0m")]
+            [InlineData("dDdDdD", "input", "\x1b[38;2;221;221;221minput\x1b[0m")]
+            [InlineData("C2985D", "input", "\x1b[38;2;194;152;93minput\x1b[0m")]
+            [InlineData("aaaaaa", "input", "\x1b[38;2;170;170;170minput\x1b[0m")]
             public void Given_Specified_Hex_Color_String_Without_A_Leading_Number_Sign_And_Input_String_Should_Return_Specified_String(string hexColor, string inputString, string expectedAnsiColorString)
             {
                 var outputAnsiColorString = inputString.Pastel(hexColor);
@@ -54,9 +56,13 @@ namespace Pastel.Tests
             {
                 const string inputString = "input";
                 const string hexColor    = "010101";
+                var hexColorWithLeadingNumberSign = $"#{hexColor}";
+
+                Assert.NotEqual(hexColor, hexColorWithLeadingNumberSign);
+                Assert.Equal(hexColor, hexColorWithLeadingNumberSign.Substring(1));
 
                 var outputAnsiColorString1 = inputString.Pastel(hexColor);
-                var outputAnsiColorString2 = inputString.Pastel($"#{hexColor}");
+                var outputAnsiColorString2 = inputString.Pastel(hexColorWithLeadingNumberSign);
 
                 Assert.Equal(outputAnsiColorString1, outputAnsiColorString2);
             }
@@ -72,7 +78,7 @@ namespace Pastel.Tests
             public void A_Given_Hex_Color_String_Should_Return_Same_Ansi_Output_String_Irrespective_Of_Case(string hexColor)
             {
                 const string inputString = "input";
-                const string expectedAnsiColorString = "\u001b[38;2;171;171;171minput\u001b[0m";
+                const string expectedAnsiColorString = "\x1b[38;2;171;171;171minput\x1b[0m";
 
 
                 var outputAnsiColorString = inputString.Pastel(hexColor);
@@ -86,8 +92,9 @@ namespace Pastel.Tests
         public class BackgroundColor
         {
             [Theory]
-            [InlineData(1,   1,   1, "input", "\u001b[48;2;1;1;1minput\u001b[0m")]
-            [InlineData(44, 70, 125, "input", "\u001b[48;2;44;70;125minput\u001b[0m")]
+            [InlineData(3,  40, 255, "",      "\x1b[48;2;3;40;255m\x1b[0m")]
+            [InlineData(1,   1,   1, "input", "\x1b[48;2;1;1;1minput\x1b[0m")]
+            [InlineData(44, 70, 125, "input", "\x1b[48;2;44;70;125minput\x1b[0m")]
             public void Given_Specified_RGB_Color_And_Input_String_Should_Return_Specified_String(int red, int green, int blue, string inputString, string expectedAnsiColorString)
             {
                 var outputAnsiColorString = inputString.PastelBg(Color.FromArgb(red, green, blue));
@@ -96,11 +103,12 @@ namespace Pastel.Tests
             }
 
             [Theory]
-            [InlineData("#010101", "input", "\u001b[48;2;1;1;1minput\u001b[0m")]
-            [InlineData("#DDDDDD", "input", "\u001b[48;2;221;221;221minput\u001b[0m")]
-            [InlineData("#dDdDdD", "input", "\u001b[48;2;221;221;221minput\u001b[0m")]
-            [InlineData("#C2985D", "input", "\u001b[48;2;194;152;93minput\u001b[0m")]
-            [InlineData("#aaaaaa", "input", "\u001b[48;2;170;170;170minput\u001b[0m")]
+            [InlineData("#0328ff",      "", "\x1b[48;2;3;40;255m\x1b[0m")]
+            [InlineData("#010101", "input", "\x1b[48;2;1;1;1minput\x1b[0m")]
+            [InlineData("#DDDDDD", "input", "\x1b[48;2;221;221;221minput\x1b[0m")]
+            [InlineData("#dDdDdD", "input", "\x1b[48;2;221;221;221minput\x1b[0m")]
+            [InlineData("#C2985D", "input", "\x1b[48;2;194;152;93minput\x1b[0m")]
+            [InlineData("#aaaaaa", "input", "\x1b[48;2;170;170;170minput\x1b[0m")]
             public void Given_Specified_Hex_Color_String_And_Input_String_Should_Return_Specified_String(string hexColor, string inputString, string expectedAnsiColorString)
             {
                 var outputAnsiColorString = inputString.PastelBg(hexColor);
@@ -109,11 +117,12 @@ namespace Pastel.Tests
             }
 
             [Theory]
-            [InlineData("010101", "input", "\u001b[48;2;1;1;1minput\u001b[0m")]
-            [InlineData("DDDDDD", "input", "\u001b[48;2;221;221;221minput\u001b[0m")]
-            [InlineData("dDdDdD", "input", "\u001b[48;2;221;221;221minput\u001b[0m")]
-            [InlineData("C2985D", "input", "\u001b[48;2;194;152;93minput\u001b[0m")]
-            [InlineData("aaaaaa", "input", "\u001b[48;2;170;170;170minput\u001b[0m")]
+            [InlineData("0328ff",      "", "\x1b[48;2;3;40;255m\x1b[0m")]
+            [InlineData("010101", "input", "\x1b[48;2;1;1;1minput\x1b[0m")]
+            [InlineData("DDDDDD", "input", "\x1b[48;2;221;221;221minput\x1b[0m")]
+            [InlineData("dDdDdD", "input", "\x1b[48;2;221;221;221minput\x1b[0m")]
+            [InlineData("C2985D", "input", "\x1b[48;2;194;152;93minput\x1b[0m")]
+            [InlineData("aaaaaa", "input", "\x1b[48;2;170;170;170minput\x1b[0m")]
             public void Given_Specified_Hex_Color_String_Without_A_Leading_Number_Sign_And_Input_String_Should_Return_Specified_String(string hexColor, string inputString, string expectedAnsiColorString)
             {
                 var outputAnsiColorString = inputString.PastelBg(hexColor);
@@ -138,24 +147,144 @@ namespace Pastel.Tests
         public class NestedColor
         {
             [Fact]
-            public void A_Nested_Color_String_Must_Be_Correctly_Closed()
+            public void A_Nested_Color_String_That_Ends_With_Reset_Should_Not_Add_An_Extra_Reset_Escape_Sequence_1()
             {
                 const int red1 = 1, green1 = 1, blue1 = 1;
                 const int red2 = 2, green2 = 2, blue2 = 2;
 
+                var output = $"START{"b".Pastel(Color.FromArgb(red2, green2, blue2))}".Pastel(Color.FromArgb(red1, green1, blue1));
+
+                Assert.Equal("\x1b[38;2;1;1;1mSTART\x1b[38;2;2;2;2mb\x1b[0m", output);
+            }
+
+            [Fact]
+            public void A_Nested_Color_String_That_Ends_With_Reset_Should_Not_Add_An_Extra_Reset_Escape_Sequence_2()
+            {
+                const int red1 = 1, green1 = 1, blue1 = 1;
+                const int red2 = 2, green2 = 2, blue2 = 2;
+
+                var output = $"START{"b".PastelBg(Color.FromArgb(red2, green2, blue2))}".PastelBg(Color.FromArgb(red1, green1, blue1));
+
+                Assert.Equal("\x1b[48;2;1;1;1mSTART\x1b[48;2;2;2;2mb\x1b[0m", output);
+            }
+
+            [Fact]
+            public void A_Nested_Color_String_That_Ends_With_Reset_Should_Not_Add_An_Extra_Reset_Escape_Sequence_3()
+            {
+                const int red1 = 1, green1 = 1, blue1 = 1;
+                const int red2 = 2, green2 = 2, blue2 = 2;
+
+                var output = $"START{"b".Pastel(Color.FromArgb(red2, green2, blue2))}".PastelBg(Color.FromArgb(red1, green1, blue1));
+
+                Assert.Equal("\x1b[48;2;1;1;1mSTART\x1b[38;2;2;2;2mb\x1b[0m", output);
+            }
+
+            [Fact]
+            public void A_Nested_Color_String_That_Ends_With_Reset_Should_Not_Add_An_Extra_Reset_Escape_Sequence_4()
+            {
+                const int red1 = 1, green1 = 1, blue1 = 1;
+                const int red2 = 2, green2 = 2, blue2 = 2;
+
+                var output = $"START{"b".PastelBg(Color.FromArgb(red2, green2, blue2))}".Pastel(Color.FromArgb(red1, green1, blue1));
+
+                Assert.Equal("\x1b[38;2;1;1;1mSTART\x1b[48;2;2;2;2mb\x1b[0m", output);
+            }
+
+            [Fact]
+            public void A_Nested_Color_String_Must_Be_Correctly_Closed_1()
+            {
+                const int red1 = 1, green1 = 1, blue1 = 1;
+                const int red2 = 2, green2 = 2, blue2 = 2;
 
                 var output = $"a{"b".Pastel(Color.FromArgb(red2, green2, blue2))}c".Pastel(Color.FromArgb(red1, green1, blue1));
 
-                Assert.Equal("\u001b[38;2;1;1;1ma\u001b[0m\u001b[38;2;2;2;2mb\u001b[0m\u001b[38;2;1;1;1mc\u001b[0m", output);
+                Assert.Equal("\x1b[38;2;1;1;1ma\x1b[38;2;2;2;2mb\x1b[0m\x1b[38;2;1;1;1mc\x1b[0m", output);
+            }
+
+            [Fact]
+            public void A_Nested_Color_String_Must_Be_Correctly_Closed_2()
+            {
+                const int red1 = 1, green1 = 1, blue1 = 1;
+                const int red2 = 2, green2 = 2, blue2 = 2;
+
+                var output = $"a{"b".PastelBg(Color.FromArgb(red2, green2, blue2))}c".PastelBg(Color.FromArgb(red1, green1, blue1));
+
+                Assert.Equal("\x1b[48;2;1;1;1ma\x1b[48;2;2;2;2mb\x1b[0m\x1b[48;2;1;1;1mc\x1b[0m", output);
+            }
+
+            [Fact]
+            public void A_Nested_Color_String_Must_Be_Correctly_Closed_3()
+            {
+                const int red1 = 1, green1 = 1, blue1 = 1;
+                const int red2 = 2, green2 = 2, blue2 = 2;
+
+                var output = $"a{"b".Pastel(Color.FromArgb(red2, green2, blue2))}c".PastelBg(Color.FromArgb(red1, green1, blue1));
+
+                Assert.Equal("\x1b[48;2;1;1;1ma\x1b[38;2;2;2;2mb\x1b[0m\x1b[48;2;1;1;1mc\x1b[0m", output);
+            }
+
+            [Fact]
+            public void A_Nested_Color_String_Must_Be_Correctly_Closed_4()
+            {
+                const int red1 = 1, green1 = 1, blue1 = 1;
+                const int red2 = 2, green2 = 2, blue2 = 2;
+
+                var output = $"a{"b".PastelBg(Color.FromArgb(red2, green2, blue2))}c".Pastel(Color.FromArgb(red1, green1, blue1));
+
+                Assert.Equal("\x1b[38;2;1;1;1ma\x1b[48;2;2;2;2mb\x1b[0m\x1b[38;2;1;1;1mc\x1b[0m", output);
             }
 
             [Fact]
             public void A_Foreground_And_Background_Nested_Color_String_Must_Be_Correctly_Closed()
             {
-                var outputAnsiColorString = $"{$"START_{"[TEST]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}_END".Pastel(Color.DeepPink)}";
+                var outputAnsiColorString = $"{$"START_{"[TEST1]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}____{"[TEST2]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}_END".Pastel(Color.DeepPink)}";
 
+                Assert.Equal("\x1b[38;2;255;20;147mSTART_\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[38;2;255;20;147m____\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST2]\x1b[0m\x1b[38;2;255;20;147m_END\x1b[0m", outputAnsiColorString);
+            }
 
-                Assert.Equal("\u001b[38;2;255;20;147mSTART_\u001b[0m\u001b[38;2;255;20;147m\u001b[48;2;220;20;60m\u001b[38;2;255;255;0m[TEST]\u001b[0m\u001b[38;2;255;20;147m_END\u001b[0m", outputAnsiColorString);
+            [InlineData("\x1b[0m")]
+            [InlineData("\x1b[0m\x1b[0m")]
+            [InlineData("\x1b[0m\x1b[0m\x1b[0m")]
+            [Theory]
+            public void A_Foreground_And_Background_Nested_Color_String_Containing_Valid_Reset_Escape_Sequences_Must_Be_Correctly_Closed(string validEscapeSequence)
+            {
+                var outputAnsiColorString = $"{$"START_{"[TEST1]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}____{"[TEST2]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}{validEscapeSequence}_END".Pastel(Color.DeepPink)}";
+
+                Assert.Equal($"\x1b[38;2;255;20;147mSTART_\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[38;2;255;20;147m____\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST2]\x1b[0m{validEscapeSequence}\x1b[38;2;255;20;147m_END\x1b[0m", outputAnsiColorString);
+            }
+
+            [InlineData("\x1b[38")]
+            [InlineData("\x1b[48")]
+            [Theory]
+            public void A_Foreground_And_Background_Nested_Color_String_Containing_Valid_Color_Escape_Sequences_Must_Be_Correctly_Closed(string validEscapeSequence)
+            {
+                var outputAnsiColorString = $"{$"START_{"[TEST1]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}____{"[TEST2]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}{validEscapeSequence}_END".Pastel(Color.DeepPink)}";
+
+                Assert.Equal($"\x1b[38;2;255;20;147mSTART_\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[38;2;255;20;147m____\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST2]\x1b[0m{validEscapeSequence}_END\x1b[0m", outputAnsiColorString);
+            }
+
+            [InlineData("\x1b")]
+            [InlineData("\x1b[")]
+
+            [InlineData("x[38")]
+            [InlineData("\x1bx38")]
+            [InlineData("\x1b[x8")]
+            [InlineData("\x1b[3x")]
+
+            [InlineData("x[48")]
+            [InlineData("\x1bx48")]
+            [InlineData("\x1b[4x")]
+
+            [InlineData("x[0m")]
+            [InlineData("\x1bx0m")]
+            [InlineData("\x1b[xm")]
+            [InlineData("\x1b[0x")]
+            [Theory]
+            public void A_Foreground_And_Background_Nested_Color_String_Containing_Invalid_Escape_Sequences_Must_Be_Correctly_Closed(string invalidEscapeSequence)
+            {
+                var outputAnsiColorString = $"{$"START_{"[TEST1]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}____{"[TEST2]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}{invalidEscapeSequence}_END".Pastel(Color.DeepPink)}";
+
+                Assert.Equal($"\x1b[38;2;255;20;147mSTART_\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[38;2;255;20;147m____\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST2]\x1b[0m\x1b[38;2;255;20;147m{invalidEscapeSequence}_END\x1b[0m", outputAnsiColorString);
             }
         }
 
@@ -166,8 +295,8 @@ namespace Pastel.Tests
 
             private static void ColorOutputEnabledTest(string expectedAnsiColorCodePart, string outputAnsiColorString1, string outputAnsiColorString2)
             {
-                Assert.Equal($"\u001b[38;2;{expectedAnsiColorCodePart}m{_input}\u001b[0m", outputAnsiColorString1);
-                Assert.Equal($"\u001b[48;2;{expectedAnsiColorCodePart}m{_input}\u001b[0m", outputAnsiColorString2);
+                Assert.Equal($"\x1b[38;2;{expectedAnsiColorCodePart}m{_input}\x1b[0m", outputAnsiColorString1);
+                Assert.Equal($"\x1b[48;2;{expectedAnsiColorCodePart}m{_input}\x1b[0m", outputAnsiColorString2);
             }
 
             private static void ColorOutputEnabledTestColor(Color color, string expectedAnsiColorCodePart)
@@ -194,8 +323,6 @@ namespace Pastel.Tests
                 ColorOutputEnabledTest(expectedAnsiColorCodePart, outputAnsiColorString1, outputAnsiColorString2);
             }
 
-
-
             private static void ColorOutputDisabledTest(string outputAnsiColorString1, string outputAnsiColorString2)
             {
                 Assert.Equal(_input, outputAnsiColorString1);
@@ -217,7 +344,6 @@ namespace Pastel.Tests
 
                 ColorOutputDisabledTest(outputAnsiColorString1, outputAnsiColorString2);
             }
-
             private static void ColorOutputDisabledTestHexColor(string color)
             {
                 var outputAnsiColorString1 = _input.Pastel(  color);
