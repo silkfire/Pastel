@@ -79,3 +79,12 @@ Pastel will detect if your application is running under a common CI/CD environme
 ### NO_COLOR
 
 Pastel will also honor systems where console color output has explicitly been requested to be turned off. See more information about this initiative at https://no-color.org.
+
+## Support
+
+Has this library helped you or proven to be useful in your project?
+
+* Leave a star! ⭐
+* Consider buying me a coffee with the link below :) I really appreciate it.
+
+<a href="https://www.buymeacoffee.com/silkfire" target="_blank" style="margin-left: 10px;"><img src="https://img.buymeacoffee.com/button-api/?text=Support me!&amp;emoji=☕&amp;slug=silkfire&amp;button_colour=79D6B5&amp;font_colour=000000&amp;font_family=Segoe UI&amp;outline_colour=000000&amp;coffee_colour=FFDD00"></a>
