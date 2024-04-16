@@ -85,6 +85,6 @@ Pastel will also honor systems where console color output has explicitly been re
 Has this library helped you or proven to be useful in your project?
 
 * Leave a star! ⭐
-* Consider buying me a coffee with the link below :) I really appreciate it.
+* Consider buying me a coffee with the link below! 💚
 
-<a href="https://www.buymeacoffee.com/silkfire" target="_blank" style="margin-left: 10px;"><img src="https://img.buymeacoffee.com/button-api/?text=Support me!&amp;emoji=☕&amp;slug=silkfire&amp;button_colour=79D6B5&amp;font_colour=000000&amp;font_family=Segoe UI&amp;outline_colour=000000&amp;coffee_colour=FFDD00"></a>
+<a href="https://www.buymeacoffee.com/silkfire" target="_blank" style="margin-left: 10px;"><img src="https://img.buymeacoffee.com/button-api/?text=Thanks for the support&amp;emoji=🙏🏻&amp;slug=silkfire&amp;button_colour=005999&amp;font_colour=ffffff&amp;font_family=Inter&amp;outline_colour=000000&amp;coffee_colour=FFDD00"></a>
