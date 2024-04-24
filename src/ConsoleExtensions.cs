@@ -1,7 +1,4 @@
-﻿#if NET7_0_OR_GREATER
-[assembly: System.Runtime.CompilerServices.DisableRuntimeMarshalling]
-#endif
-namespace Pastel
+﻿namespace Pastel
 {
     using System;
     using System.Collections.Generic;
@@ -115,13 +112,13 @@ namespace Pastel
             }
 
 
-            if (EnvironmentDetector.ColorsDisabled)
+            if (EnvironmentDetector.ColorsEnabled())
             {
-                Disable();
+                Enable();
             }
             else
             {
-                Enable();
+                Disable();
             }
         }
 

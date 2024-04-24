@@ -70,11 +70,12 @@ Both foreground and background colors can be combined by chaining the methods:
 
 ## Disabling / enabling color output
 
-If you for some reason want to disable any future color output produced by Pastel for the duration of your app, simply call `ConsoleExtensions.Disable()`. To re-enable color output, call `ConsoleExtensions.Enable()`.
+If you for any reason would like to disable any future color output produced by Pastel for the duration of your app, simply call `ConsoleExtensions.Disable()`. To re-enable color output, call `ConsoleExtensions.Enable()`.
 
 ### CI/CD environments
 
-Pastel will detect if your application is running under a common CI/CD environment and will disable all coloring if this is the case.
+Pastel will detect if your application is running under a common CI/CD environment and will disable all coloring if this is the case.  
+If you'd like to override this check and force colors in CI/CD environments, you can set an environment variable named `PASTEL_DISABLE_ENVIRONMENT_DETECTION` (value does not matter).
 
 ### NO_COLOR
 

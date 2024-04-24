@@ -1,19 +1,32 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Pastel.Tests")]
-
-namespace Pastel
+﻿namespace Pastel
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
     internal static class EnvironmentDetector
     {
+        private const string DisableEnvironmentDetectionEnvironmentVariableName = "PASTEL_DISABLE_ENVIRONMENT_DETECTION";
+
         /// <summary>
         /// Returns <see langword="true"/> if at least one of a predefined set of environment variables are set. These environment variables could e.g. indicate that the application is running in a CI/CD environment.
         /// </summary>
-        public static bool ColorsDisabled => HasEnvironmentVariable((key, value) => s_environmentVariableDetectors.Any(evd => evd(key, value)));
+        public static bool ColorsEnabled()
+        {
+            return Environment.GetEnvironmentVariable(DisableEnvironmentDetectionEnvironmentVariableName) != null || !HasEnvironmentVariable();
+        }
 
+#if NET7_0_OR_GREATER
+        private static readonly Func<string, string, bool>[] s_environmentVariableDetectors = [
+                                                                                                 IsBitbucketEnvironmentVariableKey,
+                                                                                                 IsTeamCityEnvironmentVariableKey,
+                                                                                                 NoColor,
+                                                                                                 IsGitHubAction,
+                                                                                                 IsCI,
+                                                                                                 IsJenkins
+                                                                                              ];
+#else
         private static readonly Func<string, string, bool>[] s_environmentVariableDetectors = {
                                                                                                  IsBitbucketEnvironmentVariableKey,
                                                                                                  IsTeamCityEnvironmentVariableKey,
@@ -21,7 +34,8 @@ namespace Pastel
                                                                                                  IsGitHubAction,
                                                                                                  IsCI,
                                                                                                  IsJenkins
-                                                                                             };
+                                                                                              };
+#endif
 
         private static bool IsBitbucketEnvironmentVariableKey(string key, string value)
         {
@@ -48,9 +62,8 @@ namespace Pastel
         // Set by GitHub Actions and Travis CI
         private static bool IsCI(string key, string value)
         {
-            return key.Equals("CI", StringComparison.OrdinalIgnoreCase)
-                && (value.Equals("true", StringComparison.OrdinalIgnoreCase)
-                || value.Equals("1", StringComparison.OrdinalIgnoreCase));
+            return     key.Equals("CI", StringComparison.OrdinalIgnoreCase)
+                   && (value.Equals("true", StringComparison.OrdinalIgnoreCase) || value == "1");
         }
 
         // Detect Jenkins enviroment
@@ -59,24 +72,24 @@ namespace Pastel
             return key.StartsWith("JENKINS_URL", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool HasEnvironmentVariable(Func<string, string, bool> environmentDetectorPredicate)
+        private static bool HasEnvironmentVariable()
         {
-            var processKeys = EnumerateEnvironmentVariables(EnvironmentVariableTarget.Process);
-            var userKeys = EnumerateEnvironmentVariables(EnvironmentVariableTarget.User);
-            var machineKeys = EnumerateEnvironmentVariables(EnvironmentVariableTarget.Machine);
+            var environmentVariables = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process).Cast<DictionaryEntry>()
+                                                  .Concat(Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User).Cast<DictionaryEntry>())
+                                                  .Concat(Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine).Cast<DictionaryEntry>())
+                                                  .Select(de => new KeyValuePair<string, string>(de.Key.ToString(), de.Value != null ? de.Value.ToString() : ""))
+                                                  .GroupBy(kvp => kvp.Key, (_, kvps) => kvps.First())
+                                                  .ToList();
 
-            return processKeys
-                .Concat(userKeys)
-                .Concat(machineKeys)
-                .Any(kvp => environmentDetectorPredicate(kvp.Key, kvp.Value));
-        }
-
-        private static IEnumerable<KeyValuePair<string, string>> EnumerateEnvironmentVariables(EnvironmentVariableTarget target)
-        {
-            foreach (var entry in Environment.GetEnvironmentVariables(target).OfType<DictionaryEntry>())
+            foreach (var environmentVariable in environmentVariables)
             {
-                yield return new KeyValuePair<string, string>(entry.Key.ToString(), entry.Value?.ToString() ?? string.Empty);
+                if (s_environmentVariableDetectors.Any(evd => evd(environmentVariable.Key, environmentVariable.Value)))
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
     }
 }
