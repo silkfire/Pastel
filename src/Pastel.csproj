@@ -8,9 +8,9 @@
     <Copyright>Copyright © 2024</Copyright>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
-    <Version>5.1.0</Version>
-    <AssemblyVersion>5.1.0.0</AssemblyVersion>
-    <PackageReleaseNotes>v5.1.0 Add an option to disable the detection of a CI/CD environment to override the disabling of output coloring</PackageReleaseNotes>
+    <Version>5.2.1</Version>
+    <AssemblyVersion>5.2.1.0</AssemblyVersion>
+    <PackageReleaseNotes>v5.2.0 Add extension methods for ReadOnlySpan&lt;char&gt;</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">

@@ -143,14 +143,21 @@
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        public static string Pastel(this string input, Color color)
+        public static string Pastel(this string input, Color color) => Pastel(input.AsSpan(), color);
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="color">The color to use on the specified string.</param>
+        public static string Pastel(this in ReadOnlySpan<char> input, Color color)
         {
             if (_enabled)
             {
                 return PastelInternal(in input, color.R, color.G, color.B, _fgColorPlaneFormatModifierInitialPart);
             }
 
-            return input;
+            return input.ToString();
         }
 
         /// <summary>
@@ -158,30 +165,51 @@
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        public static string Pastel(this string input, ConsoleColor color)
-        {
-            return Pastel(input, _consoleColorMapper[color]);
-        }
+        public static string Pastel(this string input, ConsoleColor color) => Pastel(input, _consoleColorMapper[color]);
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="color">The color to use on the specified string.</param>
+        public static string Pastel(this in ReadOnlySpan<char> input, ConsoleColor color) => Pastel(input, _consoleColorMapper[color]);
 
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
-        public static string Pastel(this string input, in string hexColor)
+        public static string Pastel(this string input, in string hexColor) => Pastel(input.AsSpan(), hexColor.AsSpan());
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        public static string Pastel(this string input, in ReadOnlySpan<char> hexColor) => Pastel(input.AsSpan(), hexColor);
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        public static string Pastel(this in ReadOnlySpan<char> input, in string hexColor) => Pastel(input, hexColor.AsSpan());
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        public static string Pastel(this in ReadOnlySpan<char> input, in ReadOnlySpan<char> hexColor)
         {
             if (_enabled)
             {
-#if NET6_0_OR_GREATER
                 HexToRgb(hexColor, out var r, out var g, out var b);
-#else
-                HexToRgb(hexColor.AsSpan(), out var r, out var g, out var b);
-#endif
 
                 return PastelInternal(in input, r, g, b, _fgColorPlaneFormatModifierInitialPart);
             }
 
-            return input;
+            return input.ToString();
         }
 
         /// <summary>
@@ -189,14 +217,21 @@
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        public static string PastelBg(this string input, Color color)
+        public static string PastelBg(this string input, Color color) => PastelBg(input.AsSpan(), color);
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI background color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="color">The color to use on the specified string.</param>
+        public static string PastelBg(this in ReadOnlySpan<char> input, Color color)
         {
             if (_enabled)
             {
                 return PastelInternal(in input, color.R, color.G, color.B, _bgColorPlaneFormatModifierInitialPart);
             }
 
-            return input;
+            return input.ToString();
         }
 
         /// <summary>
@@ -204,7 +239,14 @@
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        public static string PastelBg(this string input, ConsoleColor color)
+        public static string PastelBg(this string input, ConsoleColor color) => PastelBg(input.AsSpan(), color);
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI background color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="color">The color to use on the specified string.</param>
+        public static string PastelBg(this in ReadOnlySpan<char> input, ConsoleColor color)
         {
             return PastelBg(input, _consoleColorMapper[color]);
         }
@@ -214,34 +256,49 @@
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
-        public static string PastelBg(this string input, string hexColor)
+        public static string PastelBg(this string input, string hexColor) => PastelBg(input.AsSpan(), hexColor.AsSpan());
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI background color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        public static string PastelBg(this string input, in ReadOnlySpan<char> hexColor) => PastelBg(input.AsSpan(), hexColor);
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI background color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        public static string PastelBg(this in ReadOnlySpan<char> input, string hexColor) => PastelBg(input, hexColor.AsSpan());
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI background color code using the specified color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        public static string PastelBg(this in ReadOnlySpan<char> input, in ReadOnlySpan<char> hexColor)
         {
             if (_enabled)
             {
-#if NET6_0_OR_GREATER
                 HexToRgb(hexColor, out var r, out var g, out var b);
-#else
-                HexToRgb(hexColor.AsSpan(), out var r, out var g, out var b);
-#endif
 
                 return PastelInternal(in input, r, g, b, _bgColorPlaneFormatModifierInitialPart);
             }
 
-            return input;
+            return input.ToString();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static string PastelInternal(in string input, byte r, byte g, byte b, char colorPlaneFormatModifierInitialPart)
+        private static string PastelInternal(in ReadOnlySpan<char> input, byte r, byte g, byte b, char colorPlaneFormatModifierInitialPart)
         {
-            var inputSpan = input.AsSpan();
-
             var rDigitCount = CountDigits(r);
             var gDigitCount = CountDigits(g);
             var bDigitCount = CountDigits(b);
 
             var formatStringStartColorInsertCount = 0;
 
-            var haystack = inputSpan;
+            var haystack = input;
 
             // We're looking for all escape sequence resets (\x[0m) NOT followed by either 1) another reset or 2) a color escape sequence and are NOT at the end of the input string
             // In summary, all solitary escape sequence resets between the start and end of the input string
@@ -305,7 +362,7 @@
             {
                 formatStringStartColorInsertCount = 0;
 
-                haystack = inputSpan;
+                haystack = input;
 
                 int offsetPos = 0;
 #if NET6_0_OR_GREATER
@@ -363,11 +420,11 @@
             }
 
 #if NET8_0_OR_GREATER
-            var addResetSuffix = inputSpan is not [.., '\x1b', '[', '0', 'm'];
+            var addResetSuffix = input is not [.., '\x1b', '[', '0', 'm'];
 #elif NET6_0_OR_GREATER
-            var addResetSuffix = !inputSpan.EndsWith("\x1b[0m");
+            var addResetSuffix = !input.EndsWith("\x1b[0m");
 #else
-            var addResetSuffix = !inputSpan.EndsWith("\x1b[0m".AsSpan());
+            var addResetSuffix = !input.EndsWith("\x1b[0m".AsSpan());
 #endif
             var bufferLength = (7 + rDigitCount + 1 + gDigitCount + 1 + bDigitCount + 1) * (1 + colorFormatStringInsertPositions.Length) + input.Length + (addResetSuffix ? 4 : 0);
 
@@ -394,7 +451,7 @@
                                                         addResetSuffix);
 #else
             return PastelInternal(bufferLength,
-                                  input.AsSpan(),
+                                  input,
                                   colorPlaneFormatModifierInitialPart,
                                   r,
                                   rDigitCount,
@@ -413,81 +470,86 @@
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if NET6_0_OR_GREATER
-        private static unsafe string PastelInternal(int bufferLength, string input, in StringCreateData stringCreateData, int[] colorFormatStringInsertPositions)
+        private static unsafe string PastelInternal(int bufferLength, in ReadOnlySpan<char> input, in StringCreateData stringCreateData, int[] colorFormatStringInsertPositions)
         {
             string pastelString;
 
-            fixed (StringCreateData* stringCreateDataPtr = &stringCreateData)
+            fixed (char* inputPtr = input)
             {
-                pastelString = string.Create(bufferLength,
-                              (
-                               Ptr: (nint)stringCreateDataPtr,
-                               Text: input,
-                               ColorFormatStringInsertPositions: colorFormatStringInsertPositions
-                              ),
-                              static (buf, ctx) =>
-                              {
-                                  var ctxPtr = *(StringCreateData*)ctx.Ptr;
-
-                                  int i = 1;
-
-                                  buf[0] = '\x1b';
-                                  buf[i++] = '[';
-                                  buf[i++] = ctxPtr.ColorPlaneFormatModifierInitialPart;
-                                  buf[i++] = '8';
-                                  buf[i++] = ';';
-                                  buf[i++] = '2';
-                                  buf[i++] = ';';
-
-                                  ByteToString(buf.Slice(i, ctxPtr.RDigitCount), ctxPtr.R);
-                                  i += ctxPtr.RDigitCount;
-
-                                  buf[i++] = ';';
-
-                                  ByteToString(buf.Slice(i, ctxPtr.GDigitCount), ctxPtr.G);
-                                  i += ctxPtr.GDigitCount;
-
-                                  buf[i++] = ';';
-
-                                  ByteToString(buf.Slice(i, ctxPtr.BDigitCount), ctxPtr.B);
-                                  i += ctxPtr.BDigitCount;
-
-                                  buf[i++] = 'm';
-
-
-                                  var colorFormatStringBuf = buf.Slice(0, i);
-                                  var textSpan = ctx.Text.AsSpan();
-                                  var currentIndex = i;
-                                  if (ctx.ColorFormatStringInsertPositions.Length > 0)
+                fixed (StringCreateData* stringCreateDataPtr = &stringCreateData)
+                {
+                    pastelString = string.Create(bufferLength,
+                                  (
+                                   Ptr: (nint)stringCreateDataPtr,
+                                   Input: (nint)inputPtr,
+                                   InputLength: input.Length,
+                                   ColorFormatStringInsertPositions: colorFormatStringInsertPositions
+                                  ),
+                                  static (buf, ctx) =>
                                   {
-                                      int previousInsertPos = 0;
+                                      var ctxPtr = *(StringCreateData*)ctx.Ptr;
 
-                                      for (var colorFormatStringIndex = 0; colorFormatStringIndex < ctx.ColorFormatStringInsertPositions.Length; colorFormatStringIndex++)
+                                      int i = 1;
+
+                                      buf[0] = '\x1b';
+                                      buf[i++] = '[';
+                                      buf[i++] = ctxPtr.ColorPlaneFormatModifierInitialPart;
+                                      buf[i++] = '8';
+                                      buf[i++] = ';';
+                                      buf[i++] = '2';
+                                      buf[i++] = ';';
+
+                                      ByteToString(buf.Slice(i, ctxPtr.RDigitCount), ctxPtr.R);
+                                      i += ctxPtr.RDigitCount;
+
+                                      buf[i++] = ';';
+
+                                      ByteToString(buf.Slice(i, ctxPtr.GDigitCount), ctxPtr.G);
+                                      i += ctxPtr.GDigitCount;
+
+                                      buf[i++] = ';';
+
+                                      ByteToString(buf.Slice(i, ctxPtr.BDigitCount), ctxPtr.B);
+                                      i += ctxPtr.BDigitCount;
+
+                                      buf[i++] = 'm';
+
+
+                                      var colorFormatStringBuf = buf.Slice(0, i);
+                                      var textSpan = new ReadOnlySpan<char>((char*)ctx.Input, ctx.InputLength);
+                                      var currentIndex = i;
+                                      if (ctx.ColorFormatStringInsertPositions.Length > 0)
                                       {
-                                          var currentInsertPos = ctx.ColorFormatStringInsertPositions[colorFormatStringIndex];
-                                          var segmentLength = currentInsertPos - previousInsertPos;
+                                          int previousInsertPos = 0;
 
-                                          CopySegmentToBuffer(textSpan.Slice(previousInsertPos, segmentLength), buf, ref currentIndex);
-                                          CopySegmentToBuffer(colorFormatStringBuf, buf, ref currentIndex);
+                                          for (var colorFormatStringIndex = 0; colorFormatStringIndex < ctx.ColorFormatStringInsertPositions.Length; colorFormatStringIndex++)
+                                          {
+                                              var currentInsertPos = ctx.ColorFormatStringInsertPositions[colorFormatStringIndex];
+                                              var segmentLength = currentInsertPos - previousInsertPos;
 
-                                          previousInsertPos = currentInsertPos;
+                                              CopySegmentToBuffer(textSpan.Slice(previousInsertPos, segmentLength), buf, ref currentIndex);
+                                              CopySegmentToBuffer(colorFormatStringBuf, buf, ref currentIndex);
+
+                                              previousInsertPos = currentInsertPos;
+                                          }
+
+                                          CopySegmentToBuffer(textSpan.Slice(previousInsertPos), buf, ref currentIndex);
+                                      }
+                                      else
+                                      {
+                                          CopySegmentToBuffer(textSpan, buf, ref currentIndex);
                                       }
 
-                                      CopySegmentToBuffer(textSpan.Slice(previousInsertPos), buf, ref currentIndex);
-                                  }
-                                  else
-                                  {
-                                      CopySegmentToBuffer(textSpan, buf, ref currentIndex);
-                                  }
+                                      if (ctxPtr.AddResetSuffix)
+                                      {
+                                          buf[currentIndex++] = '\x1b';
+                                          buf[currentIndex++] = '[';
+                                          buf[currentIndex++] = '0';
+                                          buf[currentIndex] = 'm';
+                                      }
+                                  });
+                }
 
-                                  if (ctxPtr.AddResetSuffix)
-                                  {
-                                      buf[currentIndex++] = '\x1b';
-                                      buf[currentIndex++] = '[';
-                                      buf[currentIndex++] = '0';
-                                      buf[currentIndex] = 'm';
-                                  }
-                              });
             }
 
             return pastelString;
@@ -508,17 +570,17 @@
             bufSpan[i++] = '2';
             bufSpan[i++] = ';';
 
-            ByteToString(bufSpan.Slice(i, rDigitCount), r);
+            IntToString(bufSpan.Slice(i, rDigitCount), r);
             i += rDigitCount;
 
             bufSpan[i++] = ';';
 
-            ByteToString(bufSpan.Slice(i, gDigitCount), g);
+            IntToString(bufSpan.Slice(i, gDigitCount), g);
             i += gDigitCount;
 
             bufSpan[i++] = ';';
 
-            ByteToString(bufSpan.Slice(i, bDigitCount), b);
+            IntToString(bufSpan.Slice(i, bDigitCount), b);
             i += bDigitCount;
 
             bufSpan[i++] = 'm';
@@ -610,7 +672,7 @@
         }
 #else
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void ByteToString(Span<char> buffer, int value)
+        private static void IntToString(Span<char> buffer, int value)
         {
             if (buffer.Length == 1)
             {
@@ -656,7 +718,7 @@
 
                     return;
                 default:
-                    throw InvalidHexadecimalColorValueException(hexString.ToString());
+                    throw InvalidHexadecimalColorValueException(hexString);
             }
         }
 
@@ -665,13 +727,13 @@
         {
             byte result, add;
 
-            if (byteHi > 102
+            if (    byteHi > 102
                 || (result = s_fromHexTable16[byteHi]) == 255
-                || byteLo > 102
+                ||  byteLo > 102
                 || (add = s_fromHexTable[byteLo]) == 255
                )
             {
-                throw InvalidHexadecimalColorValueException(hexString.ToString());
+                throw InvalidHexadecimalColorValueException(hexString);
             }
 
             return (byte)(result + add);
@@ -680,7 +742,7 @@
 #if NET6_0_OR_GREATER
         private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new($"Invalid hexadecimal color value encountered: {hexString}", nameof(hexString));
 #else
-        private static ArgumentException InvalidHexadecimalColorValueException(string hexString) => new ArgumentException("Invalid hexadecimal color value encountered: " + hexString, nameof(hexString));
+        private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new ArgumentException($"Invalid hexadecimal color value encountered: {hexString.ToString()}", nameof(hexString));
 #endif
 
 #if NET7_0_OR_GREATER
