@@ -10,7 +10,7 @@
     /// <summary>
     /// Controls colored console output by <see langword="Pastel"/>.
     /// </summary>
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     public static partial class ConsoleExtensions
 #else
     public static class ConsoleExtensions
@@ -22,7 +22,7 @@
         private const uint ENABLE_PROCESSED_OUTPUT            = 0x0001;
         private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
         [LibraryImport(Kernel32DllName, EntryPoint = "GetConsoleMode")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool GetConsoleMode(nint hConsoleHandle, out uint lpMode);
@@ -304,7 +304,7 @@
             // In summary, all solitary escape sequence resets between the start and end of the input string
 
             int pos;
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
             while ((pos = haystack.IndexOf("\x1b[0m")) >= 0)
 #else
             while ((pos = haystack.IndexOf("\x1b[0m".AsSpan())) >= 0)
@@ -323,19 +323,6 @@
                     {
                         if (haystack is not [_, _, '3', '8', ..] and not [_, _, '4', '8', ..] and not [_, _, '0', 'm', ..])
                         {
-                            formatStringStartColorInsertCount++;
-                        }
-                    }
-#elif NET6_0_OR_GREATER
-                    if (!haystack.StartsWith("\x1b["))
-                    {
-                        formatStringStartColorInsertCount++;
-                    }
-                    else
-                    {
-                        var haystackSlice = haystack.Slice(2, 2);
-
-                        if (!haystackSlice.SequenceEqual("38") && !haystackSlice.SequenceEqual("48") && !haystackSlice.SequenceEqual("0m")) {
                             formatStringStartColorInsertCount++;
                         }
                     }
@@ -365,7 +352,7 @@
                 haystack = input;
 
                 int offsetPos = 0;
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
                 while ((pos = haystack.IndexOf("\x1b[0m")) >= 0)
 #else
                 while ((pos = haystack.IndexOf("\x1b[0m".AsSpan())) >= 0)
@@ -377,19 +364,12 @@
                     if (haystack.Length > 0)
                     {
 #if NET8_0_OR_GREATER
-                    if (haystack is not ['\x1b', '[', ..])
+                    if (haystack is not ['\x1b', '[', ..] or not ([_, _, '3', '8', ..] or [_, _, '4', '8', ..] or [_, _, '0', 'm', ..]))
                     {
                         colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
                     }
-                    else
-                    {
-                        if (haystack is not [_, _, '3', '8', ..] and not [_, _, '4', '8', ..] and not [_, _, '0', 'm', ..])
-                        {
-                            colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
-                        }
-                    }
-#elif NET6_0_OR_GREATER
-                    if (!haystack.StartsWith("\x1b["))
+#else
+                    if (!haystack.StartsWith("\x1b[".AsSpan()))
                     {
                         colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
                     }
@@ -397,23 +377,10 @@
                     {
                         var haystackSlice = haystack.Slice(2, 2);
 
-                        if (!haystackSlice.SequenceEqual("38") && !haystackSlice.SequenceEqual("48") && !haystackSlice.SequenceEqual("0m")) {
+                        if (!haystackSlice.SequenceEqual("38".AsSpan()) && !haystackSlice.SequenceEqual("48".AsSpan()) && !haystackSlice.SequenceEqual("0m".AsSpan())) {
                             colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
                         }
                     }
-#else
-                        if (!haystack.StartsWith("\x1b[".AsSpan()))
-                        {
-                            colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
-                        }
-                        else
-                        {
-                            var haystackSlice = haystack.Slice(2, 2);
-
-                            if (!haystackSlice.SequenceEqual("38".AsSpan()) && !haystackSlice.SequenceEqual("48".AsSpan()) && !haystackSlice.SequenceEqual("0m".AsSpan())) {
-                                colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
-                            }
-                        }
 #endif
                     }
                 }
@@ -421,14 +388,12 @@
 
 #if NET8_0_OR_GREATER
             var addResetSuffix = input is not [.., '\x1b', '[', '0', 'm'];
-#elif NET6_0_OR_GREATER
-            var addResetSuffix = !input.EndsWith("\x1b[0m");
 #else
             var addResetSuffix = !input.EndsWith("\x1b[0m".AsSpan());
 #endif
             var bufferLength = (7 + rDigitCount + 1 + gDigitCount + 1 + bDigitCount + 1) * (1 + colorFormatStringInsertPositions.Length) + input.Length + (addResetSuffix ? 4 : 0);
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
             var stringCreateData = new StringCreateData
                                    {
                                        ColorPlaneFormatModifierInitialPart = colorPlaneFormatModifierInitialPart,
@@ -440,15 +405,6 @@
                                        BDigitCount = bDigitCount,
                                        AddResetSuffix = addResetSuffix
                                    };
-#elif NET6_0_OR_GREATER
-            var stringCreateData = new StringCreateData(colorPlaneFormatModifierInitialPart,
-                                                        r,
-                                                        rDigitCount,
-                                                        g,
-                                                        gDigitCount,
-                                                        b,
-                                                        bDigitCount,
-                                                        addResetSuffix);
 #else
             return PastelInternal(bufferLength,
                                   input,
@@ -463,13 +419,13 @@
                                   addResetSuffix);
 #endif
 
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
             return PastelInternal(bufferLength, input, in stringCreateData, colorFormatStringInsertPositions);
 #endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
         private static unsafe string PastelInternal(int bufferLength, in ReadOnlySpan<char> input, in StringCreateData stringCreateData, int[] colorFormatStringInsertPositions)
         {
             string pastelString;
@@ -650,7 +606,7 @@
             return digits;
         }
 
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ByteToString(Span<char> buffer, byte value)
         {
@@ -739,13 +695,13 @@
             return (byte)(result + add);
         }
 
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
         private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new($"Invalid hexadecimal color value encountered: {hexString}", nameof(hexString));
 #else
         private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new ArgumentException($"Invalid hexadecimal color value encountered: {hexString.ToString()}", nameof(hexString));
 #endif
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
         private readonly struct StringCreateData
         {
             public required char ColorPlaneFormatModifierInitialPart { get; init; }

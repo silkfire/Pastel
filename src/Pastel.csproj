@@ -1,24 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net462;net8.0;net9.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Authors>Gabriel Bider</Authors>
     <PackageTags>console colour color colors colours colourful colorful colourize colorize ansi NO_COLOR</PackageTags>
     <Copyright>Copyright © 2024</Copyright>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
-    <Version>5.2.1</Version>
-    <AssemblyVersion>5.2.1.0</AssemblyVersion>
-    <PackageReleaseNotes>v5.2.0 Add extension methods for ReadOnlySpan&lt;char&gt;</PackageReleaseNotes>
+    <Version>6.0.0</Version>
+    <AssemblyVersion>6.0.0.0</AssemblyVersion>
+    <PackageReleaseNotes>v6.0.0 Dropped support for .NET 6; added support for .NET 9</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="System.Memory" Version="4.6.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(DefineConstants.Contains('NET7_0_OR_GREATER'))">
+  <ItemGroup Condition="$(DefineConstants.Contains('NET8_0_OR_GREATER'))">
     <AssemblyAttribute Include="System.Runtime.CompilerServices.DisableRuntimeMarshalling" />
   </ItemGroup>
 
