@@ -315,16 +315,9 @@
                 if (haystack.Length > 0)
                 {
 #if NET8_0_OR_GREATER
-                    if (haystack is not ['\x1b', '[', ..])
+                    if (haystack is not ['\x1b', '[', '0', 'm', ..])
                     {
                         formatStringStartColorInsertCount++;
-                    }
-                    else
-                    {
-                        if (haystack is not [_, _, '3', '8', ..] and not [_, _, '4', '8', ..] and not [_, _, '0', 'm', ..])
-                        {
-                            formatStringStartColorInsertCount++;
-                        }
                     }
 #else
                     if (!haystack.StartsWith("\x1b[".AsSpan()))
@@ -335,7 +328,7 @@
                     {
                         var haystackSlice = haystack.Slice(2, 2);
 
-                        if (!haystackSlice.SequenceEqual("38".AsSpan()) && !haystackSlice.SequenceEqual("48".AsSpan()) && !haystackSlice.SequenceEqual("0m".AsSpan())) {
+                        if (!haystackSlice.SequenceEqual("0m".AsSpan())) {
                             formatStringStartColorInsertCount++;
                         }
                     }
@@ -364,7 +357,7 @@
                     if (haystack.Length > 0)
                     {
 #if NET8_0_OR_GREATER
-                    if (haystack is not ['\x1b', '[', ..] or not ([_, _, '3', '8', ..] or [_, _, '4', '8', ..] or [_, _, '0', 'm', ..]))
+                    if (haystack is not ['\x1b', '[', '0', 'm', ..])
                     {
                         colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
                     }
@@ -377,7 +370,8 @@
                     {
                         var haystackSlice = haystack.Slice(2, 2);
 
-                        if (!haystackSlice.SequenceEqual("38".AsSpan()) && !haystackSlice.SequenceEqual("48".AsSpan()) && !haystackSlice.SequenceEqual("0m".AsSpan())) {
+                        if (!haystackSlice.SequenceEqual("0m".AsSpan()))
+                        {
                             colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
                         }
                     }

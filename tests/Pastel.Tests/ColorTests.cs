@@ -233,11 +233,19 @@ namespace Pastel.Tests
             }
 
             [Fact]
-            public void A_Foreground_And_Background_Nested_Color_String_Must_Be_Correctly_Closed()
+            public void A_Foreground_And_Background_Nested_Color_String_Must_Be_Correctly_Closed_1()
             {
                 var outputAnsiColorString = $"{$"START_{"[TEST1]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}____{"[TEST2]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}_END".Pastel(Color.DeepPink)}";
 
                 Assert.Equal("\x1b[38;2;255;20;147mSTART_\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[38;2;255;20;147m____\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST2]\x1b[0m\x1b[38;2;255;20;147m_END\x1b[0m", outputAnsiColorString);
+            }
+
+            [Fact]
+            public void A_Foreground_And_Background_Nested_Color_String_Must_Be_Correctly_Closed_2()
+            {
+                var outputAnsiColorString = $"{"Hello ".Pastel(Color.Yellow)}{"World".Pastel(Color.Red)}".PastelBg(Color.Blue);
+
+                Assert.Equal("\x1b[48;2;0;0;255m\x1b[38;2;255;255;0mHello \x1b[0m\x1b[48;2;0;0;255m\x1b[38;2;255;0;0mWorld\x1b[0m", outputAnsiColorString);     // FAULTY
             }
 
             [InlineData("\x1b[0m")]
@@ -258,7 +266,7 @@ namespace Pastel.Tests
             {
                 var outputAnsiColorString = $"{$"START_{"[TEST1]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}____{"[TEST2]".Pastel(Color.Yellow).PastelBg(Color.Crimson)}{validEscapeSequence}_END".Pastel(Color.DeepPink)}";
 
-                Assert.Equal($"\x1b[38;2;255;20;147mSTART_\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[38;2;255;20;147m____\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST2]\x1b[0m{validEscapeSequence}_END\x1b[0m", outputAnsiColorString);
+                Assert.Equal($"\x1b[38;2;255;20;147mSTART_\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[38;2;255;20;147m____\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST2]\x1b[0m\x1b[38;2;255;20;147m{validEscapeSequence}_END\x1b[0m", outputAnsiColorString);
             }
 
             [InlineData("\x1b")]

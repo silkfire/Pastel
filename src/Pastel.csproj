@@ -8,8 +8,9 @@
     <Copyright>Copyright © 2024</Copyright>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
-    <Version>6.0.0</Version>
-    <AssemblyVersion>6.0.0.0</AssemblyVersion>
+    <Version>6.0.1</Version>
+    <AssemblyVersion>6.0.1.0</AssemblyVersion>
+    <PackageVersion>6.0.1</PackageVersion>
     <PackageReleaseNotes>v6.0.0 Dropped support for .NET 6; added support for .NET 9</PackageReleaseNotes>
   </PropertyGroup>
 
