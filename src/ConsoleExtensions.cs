@@ -46,25 +46,65 @@
 
         private static bool _enabled;
 
-        private static readonly IReadOnlyDictionary<ConsoleColor, Color> _consoleColorMapper = new ReadOnlyDictionary<ConsoleColor, Color> (new Dictionary<ConsoleColor, Color>
-                                                                                                                                            {
-                                                                                                                                              [ConsoleColor.Black]       = Color.FromArgb(0x000000),
-                                                                                                                                              [ConsoleColor.DarkBlue]    = Color.FromArgb(0x00008B),
-                                                                                                                                              [ConsoleColor.DarkGreen]   = Color.FromArgb(0x006400),
-                                                                                                                                              [ConsoleColor.DarkCyan]    = Color.FromArgb(0x008B8B),
-                                                                                                                                              [ConsoleColor.DarkRed]     = Color.FromArgb(0x8B0000),
-                                                                                                                                              [ConsoleColor.DarkMagenta] = Color.FromArgb(0x8B008B),
-                                                                                                                                              [ConsoleColor.DarkYellow]  = Color.FromArgb(0x808000),
-                                                                                                                                              [ConsoleColor.Gray]        = Color.FromArgb(0x808080),
-                                                                                                                                              [ConsoleColor.DarkGray]    = Color.FromArgb(0xA9A9A9),
-                                                                                                                                              [ConsoleColor.Blue]        = Color.FromArgb(0x0000FF),
-                                                                                                                                              [ConsoleColor.Green]       = Color.FromArgb(0x008000),
-                                                                                                                                              [ConsoleColor.Cyan]        = Color.FromArgb(0x00FFFF),
-                                                                                                                                              [ConsoleColor.Red]         = Color.FromArgb(0xFF0000),
-                                                                                                                                              [ConsoleColor.Magenta]     = Color.FromArgb(0xFF00FF),
-                                                                                                                                              [ConsoleColor.Yellow]      = Color.FromArgb(0xFFFF00),
-                                                                                                                                              [ConsoleColor.White]       = Color.FromArgb(0xFFFFFF)
-                                                                                                                                            });
+        private static readonly ReadOnlyDictionary<ConsoleColor, Color> _consoleColorLegacyMapper = new ReadOnlyDictionary<ConsoleColor, Color> (new Dictionary<ConsoleColor, Color>
+                                                                                                                                                 {
+                                                                                                                                                   [ConsoleColor.Black]       = Color.FromArgb(0x000000),
+                                                                                                                                                   [ConsoleColor.DarkRed]     = Color.FromArgb(0x8B0000),
+                                                                                                                                                   [ConsoleColor.DarkGreen]   = Color.FromArgb(0x006400),
+                                                                                                                                                   [ConsoleColor.DarkYellow]  = Color.FromArgb(0x808000),
+                                                                                                                                                   [ConsoleColor.DarkBlue]    = Color.FromArgb(0x00008B),
+                                                                                                                                                   [ConsoleColor.DarkMagenta] = Color.FromArgb(0x8B008B),
+                                                                                                                                                   [ConsoleColor.DarkCyan]    = Color.FromArgb(0x008B8B),
+                                                                                                                                                   [ConsoleColor.Gray]        = Color.FromArgb(0x808080),
+                                                                                                                                                   [ConsoleColor.DarkGray]    = Color.FromArgb(0xA9A9A9),
+                                                                                                                                                   [ConsoleColor.Red]         = Color.FromArgb(0xFF0000),
+                                                                                                                                                   [ConsoleColor.Green]       = Color.FromArgb(0x008000),
+                                                                                                                                                   [ConsoleColor.Yellow]      = Color.FromArgb(0xFFFF00),
+                                                                                                                                                   [ConsoleColor.Blue]        = Color.FromArgb(0x0000FF),
+                                                                                                                                                   [ConsoleColor.Magenta]     = Color.FromArgb(0xFF00FF),
+                                                                                                                                                   [ConsoleColor.Cyan]        = Color.FromArgb(0x00FFFF),
+                                                                                                                                                   [ConsoleColor.White]       = Color.FromArgb(0xFFFFFF)
+                                                                                                                                                 });
+
+        private static readonly ReadOnlyDictionary<ConsoleColor, char[]> _consoleColorMapperFg = new ReadOnlyDictionary<ConsoleColor, char[]> (new Dictionary<ConsoleColor, char[]>
+                                                                                                                                               {
+                                                                                                                                                 [ConsoleColor.Black]       = new[] { '3', '0' },
+                                                                                                                                                 [ConsoleColor.DarkRed]     = new[] { '3', '1' },
+                                                                                                                                                 [ConsoleColor.DarkGreen]   = new[] { '3', '2' },
+                                                                                                                                                 [ConsoleColor.DarkYellow]  = new[] { '3', '3' },
+                                                                                                                                                 [ConsoleColor.DarkBlue]    = new[] { '3', '4' },
+                                                                                                                                                 [ConsoleColor.DarkMagenta] = new[] { '3', '5' },
+                                                                                                                                                 [ConsoleColor.DarkCyan]    = new[] { '3', '6' },
+                                                                                                                                                 [ConsoleColor.Gray]        = new[] { '3', '7' },
+                                                                                                                                                 [ConsoleColor.DarkGray]    = new[] { '9', '0' },
+                                                                                                                                                 [ConsoleColor.Red]         = new[] { '9', '1' },
+                                                                                                                                                 [ConsoleColor.Green]       = new[] { '9', '2' },
+                                                                                                                                                 [ConsoleColor.Yellow]      = new[] { '9', '3' },
+                                                                                                                                                 [ConsoleColor.Blue]        = new[] { '9', '4' },
+                                                                                                                                                 [ConsoleColor.Magenta]     = new[] { '9', '5' },
+                                                                                                                                                 [ConsoleColor.Cyan]        = new[] { '9', '6' },
+                                                                                                                                                 [ConsoleColor.White]       = new[] { '9', '7' }
+                                                                                                                                               });
+
+        private static readonly ReadOnlyDictionary<ConsoleColor, char[]> _consoleColorMapperBg = new ReadOnlyDictionary<ConsoleColor, char[]> (new Dictionary<ConsoleColor, char[]>
+                                                                                                                                               {
+                                                                                                                                                 [ConsoleColor.Black]       = new[] { '4', '0' },
+                                                                                                                                                 [ConsoleColor.DarkRed]     = new[] { '4', '1' },
+                                                                                                                                                 [ConsoleColor.DarkGreen]   = new[] { '4', '2' },
+                                                                                                                                                 [ConsoleColor.DarkYellow]  = new[] { '4', '3' },
+                                                                                                                                                 [ConsoleColor.DarkBlue]    = new[] { '4', '4' },
+                                                                                                                                                 [ConsoleColor.DarkMagenta] = new[] { '4', '5' },
+                                                                                                                                                 [ConsoleColor.DarkCyan ]   = new[] { '4', '6' },
+                                                                                                                                                 [ConsoleColor.Gray]        = new[] { '4', '7' },
+                                                                                                                                                 [ConsoleColor.DarkGray]    = new[] { '1', '0', '0' },
+                                                                                                                                                 [ConsoleColor.Red]         = new[] { '1', '0', '1' },
+                                                                                                                                                 [ConsoleColor.Green]       = new[] { '1', '0', '2' },
+                                                                                                                                                 [ConsoleColor.Yellow]      = new[] { '1', '0', '3' },
+                                                                                                                                                 [ConsoleColor.Blue]        = new[] { '1', '0', '4' },
+                                                                                                                                                 [ConsoleColor.Magenta]     = new[] { '1', '0', '5' },
+                                                                                                                                                 [ConsoleColor.Cyan]        = new[] { '1', '0', '6' },
+                                                                                                                                                 [ConsoleColor.White]       = new[] { '1', '0', '7' }
+                                                                                                                                               });
 
         private const char _fgColorPlaneFormatModifierInitialPart = '3';
         private const char _bgColorPlaneFormatModifierInitialPart = '4';
@@ -79,12 +119,12 @@
                                                             255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
                                                             255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
                                                             255, 255, 255, 255, 255, 255, 255, 255,   0,   1,
-                                                            2,   3,   4,   5,   6,   7,   8,   9, 255, 255,
+                                                              2,   3,   4,   5,   6,   7,   8,   9, 255, 255,
                                                             255, 255, 255, 255, 255,  10,  11,  12,  13,  14,
-                                                            15, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+                                                             15, 255, 255, 255, 255, 255, 255, 255, 255, 255,
                                                             255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
                                                             255, 255, 255, 255, 255, 255, 255,  10,  11,  12,
-                                                            13,  14,  15
+                                                             13,  14,  15
                                                         };
 
         // Same as above but valid values are multiplied by 16
@@ -94,7 +134,7 @@
                                                               255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
                                                               255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
                                                               255, 255, 255, 255, 255, 255, 255, 255,   0,  16,
-                                                              32,  48,  64,  80,  96, 112, 128, 144, 255, 255,
+                                                               32,  48,  64,  80,  96, 112, 128, 144, 255, 255,
                                                               255, 255, 255, 255, 255, 160, 176, 192, 208, 224,
                                                               240, 255, 255, 255, 255, 255, 255, 255, 255, 255,
                                                               255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -165,14 +205,54 @@
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        public static string Pastel(this string input, ConsoleColor color) => Pastel(input, _consoleColorMapper[color]);
+        /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
+        public static string Pastel(this string input, ConsoleColor color, bool useLegacy = false) => Pastel(input.AsSpan(), color, useLegacy);
 
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        public static string Pastel(this in ReadOnlySpan<char> input, ConsoleColor color) => Pastel(input, _consoleColorMapper[color]);
+        /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
+        public static string Pastel(this in ReadOnlySpan<char> input, ConsoleColor color, bool useLegacy = false)
+        {
+            if (useLegacy)
+            {
+                return Pastel(input, _consoleColorLegacyMapper[color]);
+            }
+
+            return PastelConsole(input, color);
+        }
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI foreground color code using the specified console color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="color">The console color to use on the specified string.</param>
+        private static string PastelConsole(this in ReadOnlySpan<char> input, ConsoleColor color)
+        {
+            if (_enabled)
+            {
+                return PastelConsoleColorInternal(in input, _consoleColorMapperFg[color]);
+            }
+
+            return input.ToString();
+        }
+
+        /// <summary>
+        /// Returns a string wrapped in an ANSI background color code using the specified console color.
+        /// </summary>
+        /// <param name="input">The string to color.</param>
+        /// <param name="color">The console color to use on the specified string.</param>
+        private static string PastelConsoleBg(this in ReadOnlySpan<char> input, ConsoleColor color)
+        {
+            if (_enabled)
+            {
+                return PastelConsoleColorInternal(in input, _consoleColorMapperBg[color]);
+            }
+
+            return input.ToString();
+        }
 
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
@@ -239,16 +319,23 @@
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        public static string PastelBg(this string input, ConsoleColor color) => PastelBg(input.AsSpan(), color);
+        /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
+        public static string PastelBg(this string input, ConsoleColor color, bool useLegacy = false) => PastelBg(input.AsSpan(), color, useLegacy);
 
         /// <summary>
-        /// Returns a string wrapped in an ANSI background color code using the specified color.
+        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        public static string PastelBg(this in ReadOnlySpan<char> input, ConsoleColor color)
+        /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
+        public static string PastelBg(this in ReadOnlySpan<char> input, ConsoleColor color, bool useLegacy = false)
         {
-            return PastelBg(input, _consoleColorMapper[color]);
+            if (useLegacy)
+            {
+                return PastelBg(input, _consoleColorLegacyMapper[color]);
+            }
+
+            return PastelConsoleBg(input, color);
         }
 
         /// <summary>
@@ -429,77 +516,76 @@
                 fixed (StringCreateData* stringCreateDataPtr = &stringCreateData)
                 {
                     pastelString = string.Create(bufferLength,
-                                  (
-                                   Ptr: (nint)stringCreateDataPtr,
-                                   Input: (nint)inputPtr,
-                                   InputLength: input.Length,
-                                   ColorFormatStringInsertPositions: colorFormatStringInsertPositions
-                                  ),
-                                  static (buf, ctx) =>
-                                  {
-                                      var ctxPtr = *(StringCreateData*)ctx.Ptr;
+                                                 (
+                                                  Ptr: (nint)stringCreateDataPtr,
+                                                  Input: (nint)inputPtr,
+                                                  InputLength: input.Length,
+                                                  ColorFormatStringInsertPositions: colorFormatStringInsertPositions
+                                                 ),
+                                                 static (buf, ctx) =>
+                                                 {
+                                                     var ctxPtr = *(StringCreateData*)ctx.Ptr;
 
-                                      int i = 1;
+                                                     int i = 0;
 
-                                      buf[0] = '\x1b';
-                                      buf[i++] = '[';
-                                      buf[i++] = ctxPtr.ColorPlaneFormatModifierInitialPart;
-                                      buf[i++] = '8';
-                                      buf[i++] = ';';
-                                      buf[i++] = '2';
-                                      buf[i++] = ';';
+                                                     buf[i++] = '\x1b';
+                                                     buf[i++] = '[';
+                                                     buf[i++] = ctxPtr.ColorPlaneFormatModifierInitialPart;
+                                                     buf[i++] = '8';
+                                                     buf[i++] = ';';
+                                                     buf[i++] = '2';
+                                                     buf[i++] = ';';
 
-                                      ByteToString(buf.Slice(i, ctxPtr.RDigitCount), ctxPtr.R);
-                                      i += ctxPtr.RDigitCount;
+                                                     ByteToString(buf.Slice(i, ctxPtr.RDigitCount), ctxPtr.R);
+                                                     i += ctxPtr.RDigitCount;
 
-                                      buf[i++] = ';';
+                                                     buf[i++] = ';';
 
-                                      ByteToString(buf.Slice(i, ctxPtr.GDigitCount), ctxPtr.G);
-                                      i += ctxPtr.GDigitCount;
+                                                     ByteToString(buf.Slice(i, ctxPtr.GDigitCount), ctxPtr.G);
+                                                     i += ctxPtr.GDigitCount;
 
-                                      buf[i++] = ';';
+                                                     buf[i++] = ';';
 
-                                      ByteToString(buf.Slice(i, ctxPtr.BDigitCount), ctxPtr.B);
-                                      i += ctxPtr.BDigitCount;
+                                                     ByteToString(buf.Slice(i, ctxPtr.BDigitCount), ctxPtr.B);
+                                                     i += ctxPtr.BDigitCount;
 
-                                      buf[i++] = 'm';
+                                                     buf[i++] = 'm';
 
 
-                                      var colorFormatStringBuf = buf.Slice(0, i);
-                                      var textSpan = new ReadOnlySpan<char>((char*)ctx.Input, ctx.InputLength);
-                                      var currentIndex = i;
-                                      if (ctx.ColorFormatStringInsertPositions.Length > 0)
-                                      {
-                                          int previousInsertPos = 0;
+                                                     var colorFormatStringBuf = buf.Slice(0, i);
+                                                     var textSpan = new ReadOnlySpan<char>((char*)ctx.Input, ctx.InputLength);
+                                                     var currentIndex = i;
+                                                     if (ctx.ColorFormatStringInsertPositions.Length > 0)
+                                                     {
+                                                         int previousInsertPos = 0;
 
-                                          for (var colorFormatStringIndex = 0; colorFormatStringIndex < ctx.ColorFormatStringInsertPositions.Length; colorFormatStringIndex++)
-                                          {
-                                              var currentInsertPos = ctx.ColorFormatStringInsertPositions[colorFormatStringIndex];
-                                              var segmentLength = currentInsertPos - previousInsertPos;
+                                                         for (var colorFormatStringIndex = 0; colorFormatStringIndex < ctx.ColorFormatStringInsertPositions.Length; colorFormatStringIndex++)
+                                                         {
+                                                             var currentInsertPos = ctx.ColorFormatStringInsertPositions[colorFormatStringIndex];
+                                                             var segmentLength = currentInsertPos - previousInsertPos;
 
-                                              CopySegmentToBuffer(textSpan.Slice(previousInsertPos, segmentLength), buf, ref currentIndex);
-                                              CopySegmentToBuffer(colorFormatStringBuf, buf, ref currentIndex);
+                                                             CopySegmentToBuffer(textSpan.Slice(previousInsertPos, segmentLength), buf, ref currentIndex);
+                                                             CopySegmentToBuffer(colorFormatStringBuf, buf, ref currentIndex);
 
-                                              previousInsertPos = currentInsertPos;
-                                          }
+                                                             previousInsertPos = currentInsertPos;
+                                                         }
 
-                                          CopySegmentToBuffer(textSpan.Slice(previousInsertPos), buf, ref currentIndex);
-                                      }
-                                      else
-                                      {
-                                          CopySegmentToBuffer(textSpan, buf, ref currentIndex);
-                                      }
+                                                         CopySegmentToBuffer(textSpan.Slice(previousInsertPos), buf, ref currentIndex);
+                                                     }
+                                                     else
+                                                     {
+                                                         CopySegmentToBuffer(textSpan, buf, ref currentIndex);
+                                                     }
 
-                                      if (ctxPtr.AddResetSuffix)
-                                      {
-                                          buf[currentIndex++] = '\x1b';
-                                          buf[currentIndex++] = '[';
-                                          buf[currentIndex++] = '0';
-                                          buf[currentIndex] = 'm';
-                                      }
-                                  });
+                                                     if (ctxPtr.AddResetSuffix)
+                                                     {
+                                                         buf[currentIndex++] = '\x1b';
+                                                         buf[currentIndex++] = '[';
+                                                         buf[currentIndex++] = '0';
+                                                         buf[currentIndex] = 'm';
+                                                     }
+                                                 });
                 }
-
             }
 
             return pastelString;
@@ -510,9 +596,9 @@
             var buf = new char[bufferLength];
             var bufSpan = buf.AsSpan();
 
-            int i = 1;
+            int i = 0;
 
-            bufSpan[0] = '\x1b';
+            bufSpan[i++] = '\x1b';
             bufSpan[i++] = '[';
             bufSpan[i++] = colorPlaneFormatModifierInitialPart;
             bufSpan[i++] = '8';
@@ -571,6 +657,89 @@
             return new string(buf);
         }
 #endif
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string PastelConsoleColorInternal(in ReadOnlySpan<char> input, char[] consoleColorValue)
+        {
+#if NET8_0_OR_GREATER
+            var addResetSuffix = input is not [.., '\x1b', '[', '0', 'm'];
+#else
+            var addResetSuffix = !input.EndsWith("\x1b[0m".AsSpan());
+#endif
+            var colorCodeLength = consoleColorValue.Length;
+            var bufferLength = 2 + colorCodeLength + 1 + input.Length + (addResetSuffix ? 4 : 0); // \x1b[ + consoleColorValue + m + input (+ \x1b[0m)
+
+#if NET8_0_OR_GREATER
+            string pastelString;
+            
+            unsafe
+            {
+                fixed (char* inputPtr = input)
+                {
+                    pastelString = string.Create(bufferLength,
+                                                 (
+                                                  Input: (nint)inputPtr,
+                                                  InputLength: input.Length,
+                                                  ConsoleColorValue: consoleColorValue,
+                                                  AddResetSuffix: addResetSuffix
+                                                 ),
+                                                 static (buf, ctx) =>
+                                                 {
+                                                     int i = 0;
+                                                 
+                                                     buf[i++] = '\x1b';
+                                                     buf[i++] = '[';
+            
+                                                     ctx.ConsoleColorValue.CopyTo(buf.Slice(i));
+                                                     i += ctx.ConsoleColorValue.Length;
+
+                                                     buf[i++] = 'm';
+
+                                                     new ReadOnlySpan<char>((char*)ctx.Input, ctx.InputLength).CopyTo(buf.Slice(i));
+
+                                                     i += ctx.InputLength;
+
+                                                     if (ctx.AddResetSuffix)
+                                                     {
+                                                         buf[i++] = '\x1b';
+                                                         buf[i++] = '[';
+                                                         buf[i++] = '0';
+                                                         buf[i] = 'm';
+                                                     }
+                                                 });
+                }
+            }
+
+            return pastelString;
+#else
+            var buf = new char[bufferLength];
+            var bufSpan = buf.AsSpan();
+
+            int i = 0;
+                                                 
+            bufSpan[i++] = '\x1b';
+            bufSpan[i++] = '[';
+            
+            consoleColorValue.CopyTo(bufSpan.Slice(i));
+            i += consoleColorValue.Length;
+
+            bufSpan[i++] = 'm';
+
+            input.CopyTo(bufSpan.Slice(i));
+
+            i += input.Length;
+
+            if (addResetSuffix)
+            {
+                bufSpan[i++] = '\x1b';
+                bufSpan[i++] = '[';
+                bufSpan[i++] = '0';
+                bufSpan[i] = 'm';
+            }
+
+            return new string(buf);
+#endif
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void CopySegmentToBuffer(in ReadOnlySpan<char> segment, Span<char> destination, ref int currentIndex)

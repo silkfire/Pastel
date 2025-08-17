@@ -10,7 +10,7 @@ namespace Pastel.Tests
         public class ForegroundColor
         {
             [Theory]
-            [InlineData(3,  40, 255, "", "\x1b[38;2;3;40;255m\x1b[0m")]
+            [InlineData(3,  40, 255, "",      "\x1b[38;2;3;40;255m\x1b[0m")]
             [InlineData(1,   1,   1, "input", "\x1b[38;2;1;1;1minput\x1b[0m")]
             [InlineData(44, 70, 125, "input", "\x1b[38;2;44;70;125minput\x1b[0m")]
             public void Given_Specified_RGB_Color_And_Input_String_Should_Return_Specified_String(int red, int green, int blue, string inputString, string expectedAnsiColorString)
@@ -18,6 +18,58 @@ namespace Pastel.Tests
                 var outputAnsiColorString = inputString.Pastel(Color.FromArgb(red, green, blue));
 
                 Assert.Equal(expectedAnsiColorString, outputAnsiColorString);
+            }
+
+            [Theory]
+            [InlineData(ConsoleColor.Black,       "30")]
+            [InlineData(ConsoleColor.DarkRed,     "31")]
+            [InlineData(ConsoleColor.DarkGreen,   "32")]
+            [InlineData(ConsoleColor.DarkYellow,  "33")]
+            [InlineData(ConsoleColor.DarkBlue,    "34")]
+            [InlineData(ConsoleColor.DarkMagenta, "35")]
+            [InlineData(ConsoleColor.DarkCyan,    "36")]
+            [InlineData(ConsoleColor.Gray,        "37")]
+            [InlineData(ConsoleColor.DarkGray,    "90")]
+            [InlineData(ConsoleColor.Red,         "91")]
+            [InlineData(ConsoleColor.Green,       "92")]
+            [InlineData(ConsoleColor.Yellow,      "93")]
+            [InlineData(ConsoleColor.Blue,        "94")]
+            [InlineData(ConsoleColor.Magenta,     "95")]
+            [InlineData(ConsoleColor.Cyan,        "96")]
+            [InlineData(ConsoleColor.White,       "97")]
+            public void Given_Specified_ConsoleColor_And_Input_String_Should_Return_Specified_String(ConsoleColor color, string expectedConsoleColorValue)
+            {
+                const string inputString = "test";
+
+                var outputAnsiColorString = inputString.Pastel(color);
+
+                Assert.Equal($"\x1b[{expectedConsoleColorValue}m{inputString}\x1b[0m", outputAnsiColorString);
+            }
+
+            [Theory]
+            [InlineData(ConsoleColor.Black,         0,   0,   0)]
+            [InlineData(ConsoleColor.DarkRed,     139,   0,   0)]
+            [InlineData(ConsoleColor.DarkGreen,     0, 100,   0)]
+            [InlineData(ConsoleColor.DarkYellow,  128, 128,   0)]
+            [InlineData(ConsoleColor.DarkBlue,      0,   0, 139)]
+            [InlineData(ConsoleColor.DarkMagenta, 139,   0, 139)]
+            [InlineData(ConsoleColor.DarkCyan,      0, 139, 139)]
+            [InlineData(ConsoleColor.Gray,        128, 128, 128)]
+            [InlineData(ConsoleColor.DarkGray,    169, 169, 169)]
+            [InlineData(ConsoleColor.Red,         255,   0,   0)]
+            [InlineData(ConsoleColor.Green,         0, 128,   0)]
+            [InlineData(ConsoleColor.Yellow,      255, 255,   0)]
+            [InlineData(ConsoleColor.Blue,          0,   0, 255)]
+            [InlineData(ConsoleColor.Magenta,     255,   0, 255)]
+            [InlineData(ConsoleColor.Cyan,          0, 255, 255)]
+            [InlineData(ConsoleColor.White,       255, 255, 255)]
+            public void Given_Specified_ConsoleColorLegacy_And_Input_String_Should_Return_Specified_String(ConsoleColor color, int expectedRValue, int expectedGValue, int expectedBValue)
+            {
+                const string inputString = "test";
+
+                var outputAnsiColorString = inputString.Pastel(color, true);
+
+                Assert.Equal($"\x1b[38;2;{expectedRValue};{expectedGValue};{expectedBValue}m{inputString}\x1b[0m", outputAnsiColorString);
             }
 
             [Theory]
@@ -84,8 +136,9 @@ namespace Pastel.Tests
 
                 Assert.Equal(expectedAnsiColorString, outputAnsiColorString);
             }
-        }
 
+
+        }
 
         public class BackgroundColor
         {
@@ -98,6 +151,58 @@ namespace Pastel.Tests
                 var outputAnsiColorString = inputString.PastelBg(Color.FromArgb(red, green, blue));
 
                 Assert.Equal(expectedAnsiColorString, outputAnsiColorString);
+            }
+
+            [Theory]
+            [InlineData(ConsoleColor.Black,        "40")]
+            [InlineData(ConsoleColor.DarkRed,      "41")]
+            [InlineData(ConsoleColor.DarkGreen,    "42")]
+            [InlineData(ConsoleColor.DarkYellow,   "43")]
+            [InlineData(ConsoleColor.DarkBlue,     "44")]
+            [InlineData(ConsoleColor.DarkMagenta,  "45")]
+            [InlineData(ConsoleColor.DarkCyan,     "46")]
+            [InlineData(ConsoleColor.Gray,         "47")]
+            [InlineData(ConsoleColor.DarkGray,    "100")]
+            [InlineData(ConsoleColor.Red,         "101")]
+            [InlineData(ConsoleColor.Green,       "102")]
+            [InlineData(ConsoleColor.Yellow,      "103")]
+            [InlineData(ConsoleColor.Blue,        "104")]
+            [InlineData(ConsoleColor.Magenta,     "105")]
+            [InlineData(ConsoleColor.Cyan,        "106")]
+            [InlineData(ConsoleColor.White,       "107")]
+            public void Given_Specified_ConsoleColor_And_Input_String_Should_Return_Specified_String(ConsoleColor color, string expectedConsoleColorValue)
+            {
+                const string inputString = "test";
+
+                var outputAnsiColorString = inputString.PastelBg(color);
+
+                Assert.Equal($"\x1b[{expectedConsoleColorValue}m{inputString}\x1b[0m", outputAnsiColorString);
+            }
+
+            [Theory]
+            [InlineData(ConsoleColor.Black,         0,   0,   0)]
+            [InlineData(ConsoleColor.DarkRed,     139,   0,   0)]
+            [InlineData(ConsoleColor.DarkGreen,     0, 100,   0)]
+            [InlineData(ConsoleColor.DarkYellow,  128, 128,   0)]
+            [InlineData(ConsoleColor.DarkBlue,      0,   0, 139)]
+            [InlineData(ConsoleColor.DarkMagenta, 139,   0, 139)]
+            [InlineData(ConsoleColor.DarkCyan,      0, 139, 139)]
+            [InlineData(ConsoleColor.Gray,        128, 128, 128)]
+            [InlineData(ConsoleColor.DarkGray,    169, 169, 169)]
+            [InlineData(ConsoleColor.Red,         255,   0,   0)]
+            [InlineData(ConsoleColor.Green,         0, 128,   0)]
+            [InlineData(ConsoleColor.Yellow,      255, 255,   0)]
+            [InlineData(ConsoleColor.Blue,          0,   0, 255)]
+            [InlineData(ConsoleColor.Magenta,     255,   0, 255)]
+            [InlineData(ConsoleColor.Cyan,          0, 255, 255)]
+            [InlineData(ConsoleColor.White,       255, 255, 255)]
+            public void Given_Specified_ConsoleColorLegacy_And_Input_String_Should_Return_Specified_String(ConsoleColor color, int expectedRValue, int expectedGValue, int expectedBValue)
+            {
+                const string inputString = "test";
+
+                var outputAnsiColorString = inputString.PastelBg(color, true);
+
+                Assert.Equal($"\x1b[48;2;{expectedRValue};{expectedGValue};{expectedBValue}m{inputString}\x1b[0m", outputAnsiColorString);
             }
 
             [Theory]
@@ -140,7 +245,6 @@ namespace Pastel.Tests
                 Assert.Equal(outputAnsiColorString1, outputAnsiColorString2);
             }
         }
-
 
         public class NestedColor
         {
@@ -294,15 +398,19 @@ namespace Pastel.Tests
             }
         }
 
-
         public class NoOutputColor
         {
             private const string _input = "input";
 
-            private static void ColorOutputEnabledTest(string expectedAnsiColorCodePart, string outputAnsiColorString1, string outputAnsiColorString2)
+            private static void ColorOutputEnabledTest(string expectedAnsiColorCodePart, string outputAnsiColorStringForeground, string outputAnsiColorStringBackground)
             {
-                Assert.Equal($"\x1b[38;2;{expectedAnsiColorCodePart}m{_input}\x1b[0m", outputAnsiColorString1);
-                Assert.Equal($"\x1b[48;2;{expectedAnsiColorCodePart}m{_input}\x1b[0m", outputAnsiColorString2);
+                Assert.Equal($"\x1b[38;2;{expectedAnsiColorCodePart}m{_input}\x1b[0m", outputAnsiColorStringForeground);
+                Assert.Equal($"\x1b[48;2;{expectedAnsiColorCodePart}m{_input}\x1b[0m", outputAnsiColorStringBackground);
+            }
+
+            private static void ColorOutputEnabledTestConsoleColor(string expectedConsoleColorValue, string outputAnsiColorString)
+            {
+                Assert.Equal($"\x1b[{expectedConsoleColorValue}m{_input}\x1b[0m", outputAnsiColorString);
             }
 
             private static void ColorOutputEnabledTestColor(Color color, string expectedAnsiColorCodePart)
@@ -313,12 +421,26 @@ namespace Pastel.Tests
                 ColorOutputEnabledTest(expectedAnsiColorCodePart, outputAnsiColorString1, outputAnsiColorString2);
             }
 
-            private static void ColorOutputEnabledTestConsoleColor(ConsoleColor color, string expectedAnsiColorCodePart)
+            private static void ColorOutputEnabledTestConsoleColorLegacy(ConsoleColor color, string expectedAnsiColorCodePart)
             {
-                var outputAnsiColorString1 = _input.Pastel(  color);
-                var outputAnsiColorString2 = _input.PastelBg(color);
+                var outputAnsiColorString1 = _input.Pastel(  color, true);
+                var outputAnsiColorString2 = _input.PastelBg(color, true);
 
                 ColorOutputEnabledTest(expectedAnsiColorCodePart, outputAnsiColorString1, outputAnsiColorString2);
+            }
+
+            private static void ColorOutputEnabledTestConsoleColorForeground(ConsoleColor color, string expectedConsoleColorValue)
+            {
+                var outputAnsiColorString = _input.Pastel(color);
+
+                ColorOutputEnabledTestConsoleColor(expectedConsoleColorValue, outputAnsiColorString);
+            }
+
+            private static void ColorOutputEnabledTestConsoleColorBackground(ConsoleColor color, string expectedConsoleColorValue)
+            {
+                var outputAnsiColorString = _input.PastelBg(color);
+
+                ColorOutputEnabledTestConsoleColor(expectedConsoleColorValue, outputAnsiColorString);
             }
 
             private static void ColorOutputEnabledTestHexColor(string color, string expectedAnsiColorCodePart)
@@ -335,10 +457,23 @@ namespace Pastel.Tests
                 Assert.Equal(_input, outputAnsiColorString2);
             }
 
+            private static void ColorOutputDisabledTestConsoleColor(string outputAnsiColorString)
+            {
+                Assert.Equal(_input, outputAnsiColorString);
+            }
+
             private static void ColorOutputDisabledTestColor(Color color)
             {
                 var outputAnsiColorString1 = _input.Pastel(  color);
                 var outputAnsiColorString2 = _input.PastelBg(color);
+
+                ColorOutputDisabledTest(outputAnsiColorString1, outputAnsiColorString2);
+            }
+
+            private static void ColorOutputDisabledTestConsoleColorLegacy(ConsoleColor color)
+            {
+                var outputAnsiColorString1 = _input.Pastel(  color, true);
+                var outputAnsiColorString2 = _input.PastelBg(color, true);
 
                 ColorOutputDisabledTest(outputAnsiColorString1, outputAnsiColorString2);
             }
@@ -350,6 +485,7 @@ namespace Pastel.Tests
 
                 ColorOutputDisabledTest(outputAnsiColorString1, outputAnsiColorString2);
             }
+
             private static void ColorOutputDisabledTestHexColor(string color)
             {
                 var outputAnsiColorString1 = _input.Pastel(  color);
@@ -403,12 +539,49 @@ namespace Pastel.Tests
             [InlineData(ConsoleColor.Magenta,     "255;0;255")]
             [InlineData(ConsoleColor.Yellow,      "255;255;0")]
             [InlineData(ConsoleColor.White,       "255;255;255")]
-            public void Output_Should_Honor_Current_State_When_Switching_Between_States_ConsoleColor(ConsoleColor color, string expectedAnsiColorCodePart)
+            public void Output_Should_Honor_Current_State_When_Switching_Between_States_ConsoleColorLegacy(ConsoleColor color, string expectedAnsiColorCodePart)
             {
                 // Enable color output
 
                 ConsoleExtensions.Enable();
-                ColorOutputEnabledTestConsoleColor(color, expectedAnsiColorCodePart);
+                ColorOutputEnabledTestConsoleColorLegacy(color, expectedAnsiColorCodePart);
+
+
+                // Disable color output
+
+                ConsoleExtensions.Disable();
+                ColorOutputDisabledTestConsoleColorLegacy(color);
+
+
+                // Re-enable color output
+
+                ConsoleExtensions.Enable();
+                ColorOutputEnabledTestConsoleColorLegacy(color, expectedAnsiColorCodePart);
+            }
+
+            [Theory]
+            [InlineData(ConsoleColor.Black,       "30")]
+            [InlineData(ConsoleColor.DarkRed,     "31")]
+            [InlineData(ConsoleColor.DarkGreen,   "32")]
+            [InlineData(ConsoleColor.DarkYellow,  "33")]
+            [InlineData(ConsoleColor.DarkBlue,    "34")]
+            [InlineData(ConsoleColor.DarkMagenta, "35")]
+            [InlineData(ConsoleColor.DarkCyan,    "36")]
+            [InlineData(ConsoleColor.Gray,        "37")]
+            [InlineData(ConsoleColor.DarkGray,    "90")]
+            [InlineData(ConsoleColor.Red,         "91")]
+            [InlineData(ConsoleColor.Green,       "92")]
+            [InlineData(ConsoleColor.Yellow,      "93")]
+            [InlineData(ConsoleColor.Blue,        "94")]
+            [InlineData(ConsoleColor.Magenta,     "95")]
+            [InlineData(ConsoleColor.Cyan,        "96")]
+            [InlineData(ConsoleColor.White,       "97")]
+            public void Output_Should_Honor_Current_State_When_Switching_Between_States_ConsoleColorForeground(ConsoleColor color, string expectedConsoleColorValue)
+            {
+                // Enable color output
+
+                ConsoleExtensions.Enable();
+                ColorOutputEnabledTestConsoleColorForeground(color, expectedConsoleColorValue);
 
 
                 // Disable color output
@@ -420,7 +593,44 @@ namespace Pastel.Tests
                 // Re-enable color output
 
                 ConsoleExtensions.Enable();
-                ColorOutputEnabledTestConsoleColor(color, expectedAnsiColorCodePart);
+                ColorOutputEnabledTestConsoleColorForeground(color, expectedConsoleColorValue);
+            }
+
+            [Theory]
+            [InlineData(ConsoleColor.Black,        "40")]
+            [InlineData(ConsoleColor.DarkRed,      "41")]
+            [InlineData(ConsoleColor.DarkGreen,    "42")]
+            [InlineData(ConsoleColor.DarkYellow,   "43")]
+            [InlineData(ConsoleColor.DarkBlue,     "44")]
+            [InlineData(ConsoleColor.DarkMagenta,  "45")]
+            [InlineData(ConsoleColor.DarkCyan,     "46")]
+            [InlineData(ConsoleColor.Gray,         "47")]
+            [InlineData(ConsoleColor.DarkGray,    "100")]
+            [InlineData(ConsoleColor.Red,         "101")]
+            [InlineData(ConsoleColor.Green,       "102")]
+            [InlineData(ConsoleColor.Yellow,      "103")]
+            [InlineData(ConsoleColor.Blue,        "104")]
+            [InlineData(ConsoleColor.Magenta,     "105")]
+            [InlineData(ConsoleColor.Cyan,        "106")]
+            [InlineData(ConsoleColor.White,       "107")]
+            public void Output_Should_Honor_Current_State_When_Switching_Between_States_ConsoleColorBackground(ConsoleColor color, string expectedConsoleColorValue)
+            {
+                // Enable color output
+
+                ConsoleExtensions.Enable();
+                ColorOutputEnabledTestConsoleColorBackground(color, expectedConsoleColorValue);
+
+
+                // Disable color output
+
+                ConsoleExtensions.Disable();
+                ColorOutputDisabledTestConsoleColor(color);
+
+
+                // Re-enable color output
+
+                ConsoleExtensions.Enable();
+                ColorOutputEnabledTestConsoleColorBackground(color, expectedConsoleColorValue);
             }
         }
     }
