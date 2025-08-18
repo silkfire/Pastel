@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net462;net8.0;net9.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Authors>Gabriel Bider</Authors>
     <PackageTags>console colour color colors colours colourful colorful colourize colorize ansi NO_COLOR</PackageTags>
@@ -27,6 +28,20 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>Pastel.Tests</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pastel.ExtensionsGenerator\Pastel.ExtensionsGenerator.csproj">
+      <OutputItemType>Analyzer</OutputItemType>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Pack>true</Pack>
+      <PackagePath>analyzers\dotnet\cs</PackagePath>
+      <PrivateAssets>none</PrivateAssets>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build\Pastel.targets" Pack="true" PackagePath="build\" />
   </ItemGroup>
 
 </Project>

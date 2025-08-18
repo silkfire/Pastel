@@ -1,0 +1,6 @@
+<Project>
+    <ItemGroup Condition="'$(MSBuildProjectName)' != 'Pastel' and '$(MSBuildProjectName)' != 'Pastel.ExtensionsGenerator'">
+        <Analyzer Include="$(MSBuildThisFileDirectory)..\analyzers\dotnet\cs\Pastel.ExtensionsGenerator.dll"
+                  Condition="Exists('$(MSBuildThisFileDirectory)..\analyzers\dotnet\cs\Pastel.ExtensionsGenerator.dll')" />
+    </ItemGroup>
+</Project>
