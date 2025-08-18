@@ -361,13 +361,11 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
 
             if (Returns.Count > 0)
             {
-                sb.AppendLine($"{indent}/// <returns>");
                 foreach (var line in Returns.Select(s => s.Split(["\r\n", "\n"], StringSplitOptions.None))
                                             .SelectMany(lines => lines))
                 {
                     sb.AppendLine($"{indent}/// {line}");
                 }
-                sb.AppendLine($"{indent}/// </returns>");
             }
 
             return sb.ToString().TrimEnd();
