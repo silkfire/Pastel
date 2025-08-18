@@ -98,8 +98,7 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
                                     Name = p.Name,
                                     Type = p.Type.ToDisplayString(),
                                     HasDefaultValue = p.HasExplicitDefaultValue,
-                                    DefaultValue = p.HasExplicitDefaultValue ? FormatDefaultValue(p.ExplicitDefaultValue) : null,
-                                    Xml = p.GetDocumentationCommentXml(expandIncludes: true)
+                                    DefaultValue = p.HasExplicitDefaultValue ? FormatDefaultValue(p.ExplicitDefaultValue) : null
                                 }).ToList(),
                                 Xml = method.GetDocumentationCommentXml(expandIncludes: true)
                             });
@@ -133,8 +132,7 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
                                                Name = p.Name,
                                                Type = p.Type.ToDisplayString(),
                                                HasDefaultValue = p.HasExplicitDefaultValue,
-                                               DefaultValue = p.HasExplicitDefaultValue ? FormatDefaultValue(p.ExplicitDefaultValue) : null,
-                                               Xml = p.GetDocumentationCommentXml(expandIncludes: true)
+                                               DefaultValue = p.HasExplicitDefaultValue ? FormatDefaultValue(p.ExplicitDefaultValue) : null
                                            })
                                            .ToList(),
                         Xml = method.GetDocumentationCommentXml(expandIncludes: true)
@@ -318,7 +316,6 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
         public string Type { get; set; } = string.Empty;
         public bool HasDefaultValue { get; set; }
         public string? DefaultValue { get; set; }
-        public string? Xml { get; set; }
     }
 
     private sealed class XmlDoc
