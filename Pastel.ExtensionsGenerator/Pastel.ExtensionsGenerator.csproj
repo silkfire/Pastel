@@ -12,6 +12,7 @@
         <DevelopmentDependency>true</DevelopmentDependency>
         <NoPackageAnalysis>true</NoPackageAnalysis>
         <IncludeSymbols>false</IncludeSymbols>
+        <AssemblyName>Pastel.ExtensionsGenerator</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
