@@ -184,10 +184,14 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
                     .OrderBy(p => p.HasDefaultValue)
                     .ToList();
 
+        var paramOrder = allParams
+                         .Select((p, i) => new { p.Name, Index = i })
+                         .ToDictionary(x => x.Name, x => x.Index);
+
         var xmlDoc = new XmlDoc();
         LoadXmlDocumentation(toString.Xml, xmlDoc, toString.Parameters);
         LoadXmlDocumentation(stringExt.Xml, xmlDoc, stringExt.Parameters);
-        sb.AppendLine(xmlDoc.ToString());
+        sb.AppendLine(xmlDoc.ToString(paramOrder, "        "));
 
         sb.AppendLine(
             $"        public static {stringExt.ReturnType} {stringExt.MethodName}(this {toString.TargetType} value{(allParams.Any() ? ", " : "")}{string.Join(", ", allParams.Select(FormatParameter))})");
@@ -222,9 +226,9 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
             if (returns != null) xmlDoc.Returns.Add(returns.ToString());
 
             xmlDoc.Parameters.AddRange(xmlMember.Elements("param")
-                                                .Where(p => parameters.Select(p => p.Name).Contains(p.Attribute("name")?.Value))
-                                                .Select(p => p.ToString())
-                                                .Where(s => !string.IsNullOrEmpty(s)));
+                                                .Where(p => parameters.Select(p => p.Name)
+                                                                      .Contains(p.Attribute("name")?.Value))
+                                                .ToList());
         }
     }
 
@@ -321,46 +325,55 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
     {
         public List<string> Summary { get; set; } = [];
         public List<string> Returns { get; set; } = [];
-        public List<string> Parameters { get; set; } = [];
+        public List<XElement> Parameters { get; set; } = [];
 
-        public override string ToString()
+        public string ToString(Dictionary<string,int> paramOrder, string indent)
         {
             var sb = new StringBuilder();
 
             if (Summary.Count > 0)
             {
-                sb.AppendLine("/// <summary>");
+                sb.AppendLine($"{indent}/// <summary>");
 
                 for (var i = 0; i < Summary.Count; i++)
                 {
                     var s = Summary[i];
-                    sb.AppendLine($"/// {s}");
-                    if (i < Summary.Count - 1) sb.AppendLine("/// <br/>");
+                    sb.AppendLine($"{indent}/// {s}");
+                    if (i < Summary.Count - 1) sb.AppendLine($"{indent}/// <br/>");
                 }
 
-                sb.AppendLine("/// </summary>");
+                sb.AppendLine($"{indent}/// </summary>");
             }
 
-            sb.AppendLine("/// <param name=\"value\">The value to convert.</param>");
+            sb.AppendLine($"{indent}/// <param name=\"value\">The value to convert.</param>");
 
-            foreach (var line in Parameters.Select(s => s.Split(["\r\n", "\n"], StringSplitOptions.None))
+            var parameters = Parameters.OrderBy(x =>
+                                       {
+                                           var name = (string?) x.Attribute("name");
+                                           return paramOrder.TryGetValue(name ?? "", out var idx) ? idx : int.MaxValue;
+                                       })
+                                       .Select(p => p.ToString())
+                                       .Where(s => !string.IsNullOrEmpty(s))
+                                       .ToList();
+
+            foreach (var line in parameters.Select(s => s.Split(["\r\n", "\n"], StringSplitOptions.None))
                                            .SelectMany(lines => lines))
             {
-                sb.AppendLine($"/// {line}");
+                sb.AppendLine($"{indent}/// {line}");
             }
 
             if (Returns.Count > 0)
             {
-                sb.AppendLine("/// <returns>");
+                sb.AppendLine($"{indent}/// <returns>");
                 foreach (var line in Returns.Select(s => s.Split(["\r\n", "\n"], StringSplitOptions.None))
                                             .SelectMany(lines => lines))
                 {
-                    sb.AppendLine($"/// {line}");
+                    sb.AppendLine($"{indent}/// {line}");
                 }
-                sb.AppendLine("/// </returns>");
+                sb.AppendLine($"{indent}/// </returns>");
             }
 
-            return sb.ToString();
+            return sb.ToString().TrimEnd();
         }
     }
 }
