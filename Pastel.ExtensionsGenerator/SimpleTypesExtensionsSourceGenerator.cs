@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis;
 namespace SimpleTypesExtensionsGenerator;
 
 [Generator]
-public class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
+public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
 {
     private static readonly string[] TargetTypes =
         [
@@ -293,7 +293,7 @@ public class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
         }
     }
 
-    private class ExtensionMethodInfo
+    private sealed class ExtensionMethodInfo
     {
         public string MethodName { get; set; } = string.Empty;
         public string ReturnType { get; set; } = string.Empty;
@@ -301,14 +301,14 @@ public class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
         public string? Xml { get; set; }
     }
 
-    private class ToStringMethodInfo
+    private sealed class ToStringMethodInfo
     {
         public string TargetType { get; set; } = string.Empty;
         public List<ParameterInfo> Parameters { get; set; } = [];
         public string? Xml { get; set; }
     }
 
-    private class ParameterInfo
+    private sealed class ParameterInfo
     {
         public string Name { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
