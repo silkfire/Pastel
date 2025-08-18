@@ -47,11 +47,12 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
 
             if (pastelAssembly == null) return;
 
-            var stringExtensions = FindStringExtensionMethods(pastelAssembly);
+            var stringExtensions = FindStringExtensionMethods(pastelAssembly, context.Compilation);
 
             if (!stringExtensions.Any()) return;
 
-            var toStringMethods = FindToStringMethods(context.Compilation);
+            var systemRuntimeXml = new DocumentationFromXmlFile(context.Compilation);
+            var toStringMethods = FindToStringMethods(context.Compilation, systemRuntimeXml);
             var generatedCode = GenerateCombinedExtensions(stringExtensions, toStringMethods);
 
             context.AddSource("PastelExtensions.g.cs", generatedCode);
@@ -72,7 +73,7 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
         }
     }
 
-    private static List<ExtensionMethodInfo> FindStringExtensionMethods(IAssemblySymbol pastelAssembly)
+    private static List<ExtensionMethodInfo> FindStringExtensionMethods(IAssemblySymbol pastelAssembly, Compilation compilation)
     {
         var extensions = new List<ExtensionMethodInfo>();
 
@@ -111,7 +112,7 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
         return extensions;
     }
 
-    private static List<ToStringMethodInfo> FindToStringMethods(Compilation compilation)
+    private static List<ToStringMethodInfo> FindToStringMethods(Compilation compilation, DocumentationFromXmlFile systemRuntimeXml)
     {
         var toStringMethods = new List<ToStringMethodInfo>();
 
@@ -123,6 +124,9 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
             {
                 if (member is IMethodSymbol { IsStatic: false } method)
                 {
+                    var xml = method.GetDocumentationCommentXml(expandIncludes: true);
+                    if (string.IsNullOrWhiteSpace(xml)) xml = systemRuntimeXml.GetDocumentationForBclMethod(method);
+
                     toStringMethods.Add(new ToStringMethodInfo
                     {
                         TargetType = targetType,
@@ -135,7 +139,7 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
                                                DefaultValue = p.HasExplicitDefaultValue ? FormatDefaultValue(p.ExplicitDefaultValue) : null
                                            })
                                            .ToList(),
-                        Xml = method.GetDocumentationCommentXml(expandIncludes: true)
+                        Xml = xml
                     });
                 }
             }
@@ -346,6 +350,16 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
             }
 
             sb.AppendLine($"{indent}/// <param name=\"value\">The value to convert.</param>");
+
+            if (paramOrder.ContainsKey("provider") && Parameters.All(p => p.Attribute("name")?.Value != "provider"))
+            {
+                Parameters.Add(new XElement("param", new XAttribute("name", "provider"), new XText("An object that supplies culture-specific formatting information.")));
+            }
+
+            if (paramOrder.ContainsKey("format") && Parameters.All(p => p.Attribute("name")?.Value != "format"))
+            {
+                Parameters.Add(new XElement("param", new XAttribute("name", "format"), new XText("A format string.")));
+            }
 
             var parameters = Parameters.OrderBy(x =>
                                        {
