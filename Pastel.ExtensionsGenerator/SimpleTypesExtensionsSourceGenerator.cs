@@ -155,6 +155,9 @@ public sealed class SimpleTypesExtensionsSourceGenerator : ISourceGenerator
         sb.AppendLine();
         sb.AppendLine("namespace Pastel");
         sb.AppendLine("{");
+        sb.AppendLine("    /// <summary>");
+        sb.AppendLine("    /// Extension methods for simple types to call Pastel() without ToString().");
+        sb.AppendLine("    /// </summary>");
         sb.AppendLine("    public static class GeneratedExtensions");
         sb.AppendLine("    {");
 
