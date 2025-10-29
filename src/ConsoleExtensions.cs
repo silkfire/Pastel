@@ -1,6 +1,9 @@
 ﻿namespace Pastel
 {
     using System;
+#if NET9_0_OR_GREATER
+    using System.Buffers;
+#endif
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Drawing;
@@ -141,6 +144,10 @@
                                                               255, 255, 255, 255, 255, 255, 255, 160, 176, 192,
                                                               208, 224, 240
                                                           };
+
+#if NET9_0_OR_GREATER
+        private static readonly SearchValues<string> s_colorEscapeStartSequence = SearchValues.Create([ "\x1b[38", "\x1b[48" ], StringComparison.Ordinal);
+#endif
 
         static ConsoleExtensions()
         {
@@ -661,13 +668,96 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string PastelConsoleColorInternal(in ReadOnlySpan<char> input, char[] consoleColorValue)
         {
+            var formatStringStartColorInsertCount = 0;
+
+            var haystack = input;
+
+            // We're looking for all escape sequence resets (\x[0m) NOT followed by either 1) another reset or 2) a console color escape sequence and are NOT at the end of the input string
+            // In summary, all solitary escape sequence resets between the start and end of the input string
+
+            int pos;
+#if NET8_0_OR_GREATER
+            while ((pos = haystack.IndexOf("\x1b[0m")) >= 0)
+#else
+            while ((pos = haystack.IndexOf("\x1b[0m".AsSpan())) >= 0)
+#endif
+            {
+                haystack = haystack.Slice(pos + 4);
+
+                if (haystack.Length > 0)
+                {
+#if NET8_0_OR_GREATER
+                    if (haystack is not ['\x1b', '[', '0', 'm', ..])
+                    {
+                        formatStringStartColorInsertCount++;
+                    }
+#else
+                    if (!haystack.StartsWith("\x1b[".AsSpan()))
+                    {
+                        formatStringStartColorInsertCount++;
+                    }
+                    else
+                    {
+                        var haystackSlice = haystack.Slice(2, 2);
+
+                        if (!haystackSlice.SequenceEqual("0m".AsSpan())) {
+                            formatStringStartColorInsertCount++;
+                        }
+                    }
+#endif
+                }
+            }
+
+            var colorFormatStringInsertPositions = new int[formatStringStartColorInsertCount];
+
+            if (formatStringStartColorInsertCount > 0)
+            {
+                formatStringStartColorInsertCount = 0;
+
+                haystack = input;
+
+                int offsetPos = 0;
+#if NET8_0_OR_GREATER
+                while ((pos = haystack.IndexOf("\x1b[0m")) >= 0)
+#else
+                while ((pos = haystack.IndexOf("\x1b[0m".AsSpan())) >= 0)
+#endif
+                {
+                    haystack = haystack.Slice(pos + 4);
+                    offsetPos += pos + 4;
+
+                    if (haystack.Length > 0)
+                    {
+#if NET8_0_OR_GREATER
+                    if (haystack is not ['\x1b', '[', '0', 'm', ..])
+                    {
+                        colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
+                    }
+#else
+                    if (!haystack.StartsWith("\x1b[".AsSpan()))
+                    {
+                        colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
+                    }
+                    else
+                    {
+                        var haystackSlice = haystack.Slice(2, 2);
+
+                        if (!haystackSlice.SequenceEqual("0m".AsSpan()))
+                        {
+                            colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
+                        }
+                    }
+#endif
+                    }
+                }
+            }
+
 #if NET8_0_OR_GREATER
             var addResetSuffix = input is not [.., '\x1b', '[', '0', 'm'];
 #else
             var addResetSuffix = !input.EndsWith("\x1b[0m".AsSpan());
 #endif
-            var colorCodeLength = consoleColorValue.Length;
-            var bufferLength = 2 + colorCodeLength + 1 + input.Length + (addResetSuffix ? 4 : 0); // \x1b[ + consoleColorValue + m + input (+ \x1b[0m)
+            var bufferLength = (2 + consoleColorValue.Length + 1) * (1 + colorFormatStringInsertPositions.Length) + input.Length + (addResetSuffix ? 4 : 0); // \x1b[ + consoleColorValue + m + input (+ \x1b[0m)
 
 #if NET8_0_OR_GREATER
             string pastelString;
@@ -681,7 +771,8 @@
                                                   Input: (nint)inputPtr,
                                                   InputLength: input.Length,
                                                   ConsoleColorValue: consoleColorValue,
-                                                  AddResetSuffix: addResetSuffix
+                                                  AddResetSuffix: addResetSuffix,
+                                                  ColorFormatStringInsertPositions: colorFormatStringInsertPositions
                                                  ),
                                                  static (buf, ctx) =>
                                                  {
@@ -695,16 +786,37 @@
 
                                                      buf[i++] = 'm';
 
-                                                     new ReadOnlySpan<char>((char*)ctx.Input, ctx.InputLength).CopyTo(buf.Slice(i));
+                                                     var colorFormatStringBuf = buf.Slice(0, i);
+                                                     var textSpan = new ReadOnlySpan<char>((char*)ctx.Input, ctx.InputLength);
+                                                     var currentIndex = i;
+                                                     if (ctx.ColorFormatStringInsertPositions.Length > 0)
+                                                     {
+                                                         int previousInsertPos = 0;
 
-                                                     i += ctx.InputLength;
+                                                         for (var colorFormatStringIndex = 0; colorFormatStringIndex < ctx.ColorFormatStringInsertPositions.Length; colorFormatStringIndex++)
+                                                         {
+                                                             var currentInsertPos = ctx.ColorFormatStringInsertPositions[colorFormatStringIndex];
+                                                             var segmentLength = currentInsertPos - previousInsertPos;
+
+                                                             CopySegmentToBuffer(textSpan.Slice(previousInsertPos, segmentLength), buf, ref currentIndex);
+                                                             CopySegmentToBuffer(colorFormatStringBuf, buf, ref currentIndex);
+
+                                                             previousInsertPos = currentInsertPos;
+                                                         }
+
+                                                         CopySegmentToBuffer(textSpan.Slice(previousInsertPos), buf, ref currentIndex);
+                                                     }
+                                                     else
+                                                     {
+                                                         CopySegmentToBuffer(textSpan, buf, ref currentIndex);
+                                                     }
 
                                                      if (ctx.AddResetSuffix)
                                                      {
-                                                         buf[i++] = '\x1b';
-                                                         buf[i++] = '[';
-                                                         buf[i++] = '0';
-                                                         buf[i] = 'm';
+                                                         buf[currentIndex++] = '\x1b';
+                                                         buf[currentIndex++] = '[';
+                                                         buf[currentIndex++] = '0';
+                                                         buf[currentIndex] = 'm';
                                                      }
                                                  });
                 }
@@ -725,16 +837,36 @@
 
             bufSpan[i++] = 'm';
 
-            input.CopyTo(bufSpan.Slice(i));
+            var colorFormatStringBuf = bufSpan.Slice(0, i);
+            var currentIndex = i;
+            if (colorFormatStringInsertPositions.Length > 0)
+            {
+                int previousInsertPos = 0;
 
-            i += input.Length;
+                for (var colorFormatStringIndex = 0; colorFormatStringIndex < colorFormatStringInsertPositions.Length; colorFormatStringIndex++)
+                {
+                    var currentInsertPos = colorFormatStringInsertPositions[colorFormatStringIndex];
+                    var segmentLength = currentInsertPos - previousInsertPos;
+
+                    CopySegmentToBuffer(input.Slice(previousInsertPos, segmentLength), buf, ref currentIndex);
+                    CopySegmentToBuffer(colorFormatStringBuf, buf, ref currentIndex);
+
+                    previousInsertPos = currentInsertPos;
+                }
+
+                CopySegmentToBuffer(input.Slice(previousInsertPos), buf, ref currentIndex);
+            }
+            else
+            {
+                CopySegmentToBuffer(input, buf, ref currentIndex);
+            }
 
             if (addResetSuffix)
             {
-                bufSpan[i++] = '\x1b';
-                bufSpan[i++] = '[';
-                bufSpan[i++] = '0';
-                bufSpan[i] = 'm';
+                bufSpan[currentIndex++] = '\x1b';
+                bufSpan[currentIndex++] = '[';
+                bufSpan[currentIndex++] = '0';
+                bufSpan[currentIndex] = 'm';
             }
 
             return new string(buf);

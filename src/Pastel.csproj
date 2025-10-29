@@ -8,10 +8,10 @@
     <Copyright>Copyright © 2025</Copyright>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
-    <Version>7.0.0</Version>
-    <AssemblyVersion>7.0.0.0</AssemblyVersion>
-    <PackageVersion>7.0.0</PackageVersion>
-    <PackageReleaseNotes>v7.0.0 Use terminal theme-defined ANSI base colors as default for the ConsoleColor overload</PackageReleaseNotes>
+    <Version>7.0.1</Version>
+    <AssemblyVersion>7.0.1.0</AssemblyVersion>
+    <PackageVersion>7.0.1</PackageVersion>
+    <PackageReleaseNotes>v7.0.1 Use terminal theme-defined ANSI base colors as default for the ConsoleColor overload</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">

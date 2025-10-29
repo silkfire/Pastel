@@ -80,12 +80,3 @@ If you'd like to override this check and force colors in CI/CD environments, you
 ### NO_COLOR
 
 Pastel will also honor systems where console color output has explicitly been requested to be turned off. See more information about this initiative at https://no-color.org.
-
-## Support
-
-Has this library helped you or proven to be useful in your project?
-
-* Leave a star!
-* Consider buying me a coffee with the link below! ⭐
-
-<a href="https://www.buymeacoffee.com/silkfire" target="_blank" style="margin-left: 10px;"><img src="https://img.buymeacoffee.com/button-api/?textBuy me a coffee&amp;emoji=☕&amp;slug=silkfire&amp;button_colour=FFDD00&amp;font_colour=000000&amp;font_family=Cookie&amp;outline_colour=000000&amp;coffee_colour=ffffff"></a>
