@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5.2.0
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: dotnet test -c Release --no-build
+
+      - name: Pack
+        run: dotnet pack src/Pastel.csproj -c Release --no-build -o artifacts
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: nupkg
+          path: artifacts/*.nupkg
+
+      - name: Push to NuGet
+        shell: pwsh
+        run: |
+          $package = Get-ChildItem artifacts/*.nupkg | Select-Object -First 1
+          dotnet nuget push $package.FullName --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
