@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Pastel</name>
+    </assembly>
+    <members>
+        <member name="T:Pastel.ConsoleExtensions">
+            <summary>
+            Controls colored console output by <see langword="Pastel"/>.
+            </summary>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Enable">
+            <summary>
+            Enables any future console color output produced by Pastel.
+            </summary>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Disable">
+            <summary>
+            Disables any future console color output produced by Pastel.
+            </summary>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Pastel(System.String,System.Drawing.Color)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The color to use on the specified string.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Pastel(System.ReadOnlySpan{System.Char}@,System.Drawing.Color)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The color to use on the specified string.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Pastel(System.String,System.ConsoleColor,System.Boolean)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The color to use on the specified string.</param>
+            <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="T:System.ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Pastel(System.ReadOnlySpan{System.Char}@,System.ConsoleColor,System.Boolean)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The color to use on the specified string.</param>
+            <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="T:System.ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelConsole(System.ReadOnlySpan{System.Char}@,System.ConsoleColor)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified console color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The console color to use on the specified string.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelConsoleBg(System.ReadOnlySpan{System.Char}@,System.ConsoleColor)">
+            <summary>
+            Returns a string wrapped in an ANSI background color code using the specified console color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The console color to use on the specified string.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Pastel(System.String,System.String@)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Pastel(System.String,System.ReadOnlySpan{System.Char}@)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Pastel(System.ReadOnlySpan{System.Char}@,System.String@)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.Pastel(System.ReadOnlySpan{System.Char}@,System.ReadOnlySpan{System.Char}@)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelBg(System.String,System.Drawing.Color)">
+            <summary>
+            Returns a string wrapped in an ANSI background color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The color to use on the specified string.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelBg(System.ReadOnlySpan{System.Char}@,System.Drawing.Color)">
+            <summary>
+            Returns a string wrapped in an ANSI background color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The color to use on the specified string.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelBg(System.String,System.ConsoleColor,System.Boolean)">
+            <summary>
+            Returns a string wrapped in an ANSI background color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The color to use on the specified string.</param>
+            <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="T:System.ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelBg(System.ReadOnlySpan{System.Char}@,System.ConsoleColor,System.Boolean)">
+            <summary>
+            Returns a string wrapped in an ANSI foreground color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="color">The color to use on the specified string.</param>
+            <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="T:System.ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelBg(System.String,System.String)">
+            <summary>
+            Returns a string wrapped in an ANSI background color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelBg(System.String,System.ReadOnlySpan{System.Char}@)">
+            <summary>
+            Returns a string wrapped in an ANSI background color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelBg(System.ReadOnlySpan{System.Char}@,System.String)">
+            <summary>
+            Returns a string wrapped in an ANSI background color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        </member>
+        <member name="M:Pastel.ConsoleExtensions.PastelBg(System.ReadOnlySpan{System.Char}@,System.ReadOnlySpan{System.Char}@)">
+            <summary>
+            Returns a string wrapped in an ANSI background color code using the specified color.
+            </summary>
+            <param name="input">The string to color.</param>
+            <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        </member>
+        <member name="M:Pastel.EnvironmentDetector.ColorsEnabled">
+            <summary>
+            Returns <see langword="true"/> if at least one of a predefined set of environment variables are set. These environment variables could e.g. indicate that the application is running in a CI/CD environment.
+            </summary>
+        </member>
+    </members>
+</doc>
