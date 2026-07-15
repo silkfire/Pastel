@@ -3,15 +3,19 @@ namespace Pastel.Tests
     using Xunit;
 
     using System;
+    using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class EnvironmentTests
     {
         private const string DisableEnvironmentDetectionEnvironmentVariableName = "PASTEL_DISABLE_ENVIRONMENT_DETECTION";
 
-        // The detection reads every environment variable of the process, so a real CI/CD environment would otherwise
-        // be detected alongside the variable under test and make every ExpectedOutcome: true case fail on a build server
-        private static readonly string[] _ambientDetectedEnvironmentVariableNames = { "CI", "NO_COLOR", "GITHUB_ACTION", "GITHUB_ACTIONS", "JENKINS_URL" };
+        // The detection reads every environment variable of the process, so anything the host build server sets would
+        // otherwise be detected alongside the variable under test and make every ExpectedOutcome: true case fail there.
+        // The prefixes have to match the detectors in EnvironmentDetector rather than a list of names: the GitHub Actions
+        // detector matches a GITHUB_ACTION prefix, and a real runner sets GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY and more.
+        private static readonly string[] _detectedEnvironmentVariablePrefixes = { "BITBUCKET_", "TEAMCITY_", "NO_COLOR", "GITHUB_ACTION", "CI", "JENKINS_URL" };
 
         [Theory, CombinatorialData]
         public void TestEnvironmentVariables([CombinatorialMemberData(nameof(GetEnvironmentVariables))] (string Key, string Value, bool ExpectedOutcome) environmentVariable, [CombinatorialMemberData(nameof(GetEnvironmentDetectionDisabledEnvironmentVariables))] string environmentDetectionDisabledEnvironmentVariable)
@@ -21,20 +25,18 @@ namespace Pastel.Tests
             try
             {
                 // Arrange
-                foreach (var ambientEnvironmentVariableName in _ambientDetectedEnvironmentVariableNames)
+                foreach (DictionaryEntry ambientEnvironmentVariable in Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process))
                 {
-                    if (string.Equals(ambientEnvironmentVariableName, environmentVariable.Key, StringComparison.OrdinalIgnoreCase))
+                    var ambientEnvironmentVariableName = ambientEnvironmentVariable.Key.ToString();
+
+                    if (   string.Equals(ambientEnvironmentVariableName, environmentVariable.Key, StringComparison.OrdinalIgnoreCase)
+                        || !_detectedEnvironmentVariablePrefixes.Any(p => ambientEnvironmentVariableName.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
                     {
                         continue;
                     }
 
-                    var ambientValue = Environment.GetEnvironmentVariable(ambientEnvironmentVariableName, EnvironmentVariableTarget.Process);
-
-                    if (ambientValue != null)
-                    {
-                        suppressedEnvironmentVariables[ambientEnvironmentVariableName] = ambientValue;
-                        Environment.SetEnvironmentVariable(ambientEnvironmentVariableName, null, EnvironmentVariableTarget.Process);
-                    }
+                    suppressedEnvironmentVariables[ambientEnvironmentVariableName] = ambientEnvironmentVariable.Value?.ToString();
+                    Environment.SetEnvironmentVariable(ambientEnvironmentVariableName, null, EnvironmentVariableTarget.Process);
                 }
 
                 if (environmentDetectionDisabledEnvironmentVariable != null)
