@@ -9,12 +9,34 @@
     {
         private const string DisableEnvironmentDetectionEnvironmentVariableName = "PASTEL_DISABLE_ENVIRONMENT_DETECTION";
 
+        // The detection reads every environment variable of the process, so a real CI/CD environment would otherwise
+        // be detected alongside the variable under test and make every ExpectedOutcome: true case fail on a build server
+        private static readonly string[] _ambientDetectedEnvironmentVariableNames = { "CI", "NO_COLOR", "GITHUB_ACTION", "GITHUB_ACTIONS", "JENKINS_URL" };
+
         [Theory, CombinatorialData]
         public void TestEnvironmentVariables([CombinatorialMemberData(nameof(GetEnvironmentVariables))] (string Key, string Value, bool ExpectedOutcome) environmentVariable, [CombinatorialMemberData(nameof(GetEnvironmentDetectionDisabledEnvironmentVariables))] string environmentDetectionDisabledEnvironmentVariable)
         {
+            var suppressedEnvironmentVariables = new Dictionary<string, string>();
+
             try
             {
                 // Arrange
+                foreach (var ambientEnvironmentVariableName in _ambientDetectedEnvironmentVariableNames)
+                {
+                    if (string.Equals(ambientEnvironmentVariableName, environmentVariable.Key, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    var ambientValue = Environment.GetEnvironmentVariable(ambientEnvironmentVariableName, EnvironmentVariableTarget.Process);
+
+                    if (ambientValue != null)
+                    {
+                        suppressedEnvironmentVariables[ambientEnvironmentVariableName] = ambientValue;
+                        Environment.SetEnvironmentVariable(ambientEnvironmentVariableName, null, EnvironmentVariableTarget.Process);
+                    }
+                }
+
                 if (environmentDetectionDisabledEnvironmentVariable != null)
                 {
                     Environment.SetEnvironmentVariable(DisableEnvironmentDetectionEnvironmentVariableName, environmentDetectionDisabledEnvironmentVariable, EnvironmentVariableTarget.Process);
@@ -32,6 +54,11 @@
                 // Cleanup
                 Environment.SetEnvironmentVariable(DisableEnvironmentDetectionEnvironmentVariableName, null, EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable(environmentVariable.Key, null, EnvironmentVariableTarget.Process);
+
+                foreach (var suppressedEnvironmentVariable in suppressedEnvironmentVariables)
+                {
+                    Environment.SetEnvironmentVariable(suppressedEnvironmentVariable.Key, suppressedEnvironmentVariable.Value, EnvironmentVariableTarget.Process);
+                }
             }
         }
 

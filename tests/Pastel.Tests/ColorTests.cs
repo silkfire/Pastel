@@ -7,6 +7,7 @@ namespace Pastel.Tests
 
     public class ColorTests
     {
+        [Collection(ColorOutputEnabledCollection.Name)]
         public class ForegroundColor
         {
             [Theory]
@@ -140,6 +141,7 @@ namespace Pastel.Tests
 
         }
 
+        [Collection(ColorOutputEnabledCollection.Name)]
         public class BackgroundColor
         {
             [Theory]
@@ -246,6 +248,7 @@ namespace Pastel.Tests
             }
         }
 
+        [Collection(ColorOutputEnabledCollection.Name)]
         public class InvalidHexColor
         {
             [InlineData("nothex")]
@@ -274,6 +277,7 @@ namespace Pastel.Tests
             }
         }
 
+        [Collection(ColorOutputEnabledCollection.Name)]
         public class UndefinedConsoleColor
         {
             [InlineData(-1)]
@@ -291,6 +295,7 @@ namespace Pastel.Tests
             }
         }
 
+        [Collection(ColorOutputEnabledCollection.Name)]
         public class NestedColor
         {
             [Fact]
