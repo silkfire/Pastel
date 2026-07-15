@@ -165,6 +165,12 @@
             <param name="input">The string to scan.</param>
             <param name="colorFormatStringInsertPositions">If not <see langword="null"/>, receives the positions found. Must be able to hold as many positions as a preceding counting pass reported.</param>
         </member>
+        <member name="M:Pastel.ConsoleExtensions.ValidateConsoleColor(System.ConsoleColor)">
+            <summary>
+            Throws if the specified value is not one of the defined <see cref="T:System.ConsoleColor"/> members, as all mappers are indexed by its numeric value.
+            </summary>
+            <param name="color">The console color to validate.</param>
+        </member>
         <member name="M:Pastel.EnvironmentDetector.ColorsEnabled">
             <summary>
             Returns <see langword="true"/> if at least one of a predefined set of environment variables are set. These environment variables could e.g. indicate that the application is running in a CI/CD environment.

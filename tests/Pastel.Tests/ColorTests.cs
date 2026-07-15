@@ -246,6 +246,23 @@ namespace Pastel.Tests
             }
         }
 
+        public class UndefinedConsoleColor
+        {
+            [InlineData(-1)]
+            [InlineData(16)]
+            [InlineData(99)]
+            [Theory]
+            public void An_Undefined_ConsoleColor_Value_Should_Throw(int undefinedConsoleColorValue)
+            {
+                var color = (ConsoleColor)undefinedConsoleColorValue;
+
+                Assert.Throws<ArgumentOutOfRangeException>(() => "input".Pastel(  color));
+                Assert.Throws<ArgumentOutOfRangeException>(() => "input".Pastel(  color, true));
+                Assert.Throws<ArgumentOutOfRangeException>(() => "input".PastelBg(color));
+                Assert.Throws<ArgumentOutOfRangeException>(() => "input".PastelBg(color, true));
+            }
+        }
+
         public class NestedColor
         {
             [Fact]

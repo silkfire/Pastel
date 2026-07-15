@@ -46,65 +46,64 @@
 
         private static bool _enabled;
 
-        private static readonly ReadOnlyDictionary<ConsoleColor, Color> _consoleColorLegacyMapper = new ReadOnlyDictionary<ConsoleColor, Color> (new Dictionary<ConsoleColor, Color>
-                                                                                                                                                 {
-                                                                                                                                                   [ConsoleColor.Black]       = Color.FromArgb(0x000000),
-                                                                                                                                                   [ConsoleColor.DarkRed]     = Color.FromArgb(0x8B0000),
-                                                                                                                                                   [ConsoleColor.DarkGreen]   = Color.FromArgb(0x006400),
-                                                                                                                                                   [ConsoleColor.DarkYellow]  = Color.FromArgb(0x808000),
-                                                                                                                                                   [ConsoleColor.DarkBlue]    = Color.FromArgb(0x00008B),
-                                                                                                                                                   [ConsoleColor.DarkMagenta] = Color.FromArgb(0x8B008B),
-                                                                                                                                                   [ConsoleColor.DarkCyan]    = Color.FromArgb(0x008B8B),
-                                                                                                                                                   [ConsoleColor.Gray]        = Color.FromArgb(0x808080),
-                                                                                                                                                   [ConsoleColor.DarkGray]    = Color.FromArgb(0xA9A9A9),
-                                                                                                                                                   [ConsoleColor.Red]         = Color.FromArgb(0xFF0000),
-                                                                                                                                                   [ConsoleColor.Green]       = Color.FromArgb(0x008000),
-                                                                                                                                                   [ConsoleColor.Yellow]      = Color.FromArgb(0xFFFF00),
-                                                                                                                                                   [ConsoleColor.Blue]        = Color.FromArgb(0x0000FF),
-                                                                                                                                                   [ConsoleColor.Magenta]     = Color.FromArgb(0xFF00FF),
-                                                                                                                                                   [ConsoleColor.Cyan]        = Color.FromArgb(0x00FFFF),
-                                                                                                                                                   [ConsoleColor.White]       = Color.FromArgb(0xFFFFFF)
-                                                                                                                                                 });
+        // All three mappers are indexed by the numeric value of the ConsoleColor enum, which is contiguous in the range 0-15
 
-        private static readonly ReadOnlyDictionary<ConsoleColor, char[]> _consoleColorMapperFg = new ReadOnlyDictionary<ConsoleColor, char[]> (new Dictionary<ConsoleColor, char[]>
-                                                                                                                                               {
-                                                                                                                                                 [ConsoleColor.Black]       = new[] { '3', '0' },
-                                                                                                                                                 [ConsoleColor.DarkRed]     = new[] { '3', '1' },
-                                                                                                                                                 [ConsoleColor.DarkGreen]   = new[] { '3', '2' },
-                                                                                                                                                 [ConsoleColor.DarkYellow]  = new[] { '3', '3' },
-                                                                                                                                                 [ConsoleColor.DarkBlue]    = new[] { '3', '4' },
-                                                                                                                                                 [ConsoleColor.DarkMagenta] = new[] { '3', '5' },
-                                                                                                                                                 [ConsoleColor.DarkCyan]    = new[] { '3', '6' },
-                                                                                                                                                 [ConsoleColor.Gray]        = new[] { '3', '7' },
-                                                                                                                                                 [ConsoleColor.DarkGray]    = new[] { '9', '0' },
-                                                                                                                                                 [ConsoleColor.Red]         = new[] { '9', '1' },
-                                                                                                                                                 [ConsoleColor.Green]       = new[] { '9', '2' },
-                                                                                                                                                 [ConsoleColor.Yellow]      = new[] { '9', '3' },
-                                                                                                                                                 [ConsoleColor.Blue]        = new[] { '9', '4' },
-                                                                                                                                                 [ConsoleColor.Magenta]     = new[] { '9', '5' },
-                                                                                                                                                 [ConsoleColor.Cyan]        = new[] { '9', '6' },
-                                                                                                                                                 [ConsoleColor.White]       = new[] { '9', '7' }
-                                                                                                                                               });
+        private static readonly Color[] s_consoleColorLegacyMapper = {
+                                                                         /* Black       */ Color.FromArgb(0x000000),
+                                                                         /* DarkBlue    */ Color.FromArgb(0x00008B),
+                                                                         /* DarkGreen   */ Color.FromArgb(0x006400),
+                                                                         /* DarkCyan    */ Color.FromArgb(0x008B8B),
+                                                                         /* DarkRed     */ Color.FromArgb(0x8B0000),
+                                                                         /* DarkMagenta */ Color.FromArgb(0x8B008B),
+                                                                         /* DarkYellow  */ Color.FromArgb(0x808000),
+                                                                         /* Gray        */ Color.FromArgb(0x808080),
+                                                                         /* DarkGray    */ Color.FromArgb(0xA9A9A9),
+                                                                         /* Blue        */ Color.FromArgb(0x0000FF),
+                                                                         /* Green       */ Color.FromArgb(0x008000),
+                                                                         /* Cyan        */ Color.FromArgb(0x00FFFF),
+                                                                         /* Red         */ Color.FromArgb(0xFF0000),
+                                                                         /* Magenta     */ Color.FromArgb(0xFF00FF),
+                                                                         /* Yellow      */ Color.FromArgb(0xFFFF00),
+                                                                         /* White       */ Color.FromArgb(0xFFFFFF)
+                                                                     };
 
-        private static readonly ReadOnlyDictionary<ConsoleColor, char[]> _consoleColorMapperBg = new ReadOnlyDictionary<ConsoleColor, char[]> (new Dictionary<ConsoleColor, char[]>
-                                                                                                                                               {
-                                                                                                                                                 [ConsoleColor.Black]       = new[] { '4', '0' },
-                                                                                                                                                 [ConsoleColor.DarkRed]     = new[] { '4', '1' },
-                                                                                                                                                 [ConsoleColor.DarkGreen]   = new[] { '4', '2' },
-                                                                                                                                                 [ConsoleColor.DarkYellow]  = new[] { '4', '3' },
-                                                                                                                                                 [ConsoleColor.DarkBlue]    = new[] { '4', '4' },
-                                                                                                                                                 [ConsoleColor.DarkMagenta] = new[] { '4', '5' },
-                                                                                                                                                 [ConsoleColor.DarkCyan ]   = new[] { '4', '6' },
-                                                                                                                                                 [ConsoleColor.Gray]        = new[] { '4', '7' },
-                                                                                                                                                 [ConsoleColor.DarkGray]    = new[] { '1', '0', '0' },
-                                                                                                                                                 [ConsoleColor.Red]         = new[] { '1', '0', '1' },
-                                                                                                                                                 [ConsoleColor.Green]       = new[] { '1', '0', '2' },
-                                                                                                                                                 [ConsoleColor.Yellow]      = new[] { '1', '0', '3' },
-                                                                                                                                                 [ConsoleColor.Blue]        = new[] { '1', '0', '4' },
-                                                                                                                                                 [ConsoleColor.Magenta]     = new[] { '1', '0', '5' },
-                                                                                                                                                 [ConsoleColor.Cyan]        = new[] { '1', '0', '6' },
-                                                                                                                                                 [ConsoleColor.White]       = new[] { '1', '0', '7' }
-                                                                                                                                               });
+        private static readonly char[][] s_consoleColorMapperFg = {
+                                                                      /* Black       */ new[] { '3', '0' },
+                                                                      /* DarkBlue    */ new[] { '3', '4' },
+                                                                      /* DarkGreen   */ new[] { '3', '2' },
+                                                                      /* DarkCyan    */ new[] { '3', '6' },
+                                                                      /* DarkRed     */ new[] { '3', '1' },
+                                                                      /* DarkMagenta */ new[] { '3', '5' },
+                                                                      /* DarkYellow  */ new[] { '3', '3' },
+                                                                      /* Gray        */ new[] { '3', '7' },
+                                                                      /* DarkGray    */ new[] { '9', '0' },
+                                                                      /* Blue        */ new[] { '9', '4' },
+                                                                      /* Green       */ new[] { '9', '2' },
+                                                                      /* Cyan        */ new[] { '9', '6' },
+                                                                      /* Red         */ new[] { '9', '1' },
+                                                                      /* Magenta     */ new[] { '9', '5' },
+                                                                      /* Yellow      */ new[] { '9', '3' },
+                                                                      /* White       */ new[] { '9', '7' }
+                                                                  };
+
+        private static readonly char[][] s_consoleColorMapperBg = {
+                                                                      /* Black       */ new[] { '4', '0' },
+                                                                      /* DarkBlue    */ new[] { '4', '4' },
+                                                                      /* DarkGreen   */ new[] { '4', '2' },
+                                                                      /* DarkCyan    */ new[] { '4', '6' },
+                                                                      /* DarkRed     */ new[] { '4', '1' },
+                                                                      /* DarkMagenta */ new[] { '4', '5' },
+                                                                      /* DarkYellow  */ new[] { '4', '3' },
+                                                                      /* Gray        */ new[] { '4', '7' },
+                                                                      /* DarkGray    */ new[] { '1', '0', '0' },
+                                                                      /* Blue        */ new[] { '1', '0', '4' },
+                                                                      /* Green       */ new[] { '1', '0', '2' },
+                                                                      /* Cyan        */ new[] { '1', '0', '6' },
+                                                                      /* Red         */ new[] { '1', '0', '1' },
+                                                                      /* Magenta     */ new[] { '1', '0', '5' },
+                                                                      /* Yellow      */ new[] { '1', '0', '3' },
+                                                                      /* White       */ new[] { '1', '0', '7' }
+                                                                  };
 
         private const char _fgColorPlaneFormatModifierInitialPart = '3';
         private const char _bgColorPlaneFormatModifierInitialPart = '4';
@@ -216,9 +215,11 @@
         /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
         public static string Pastel(this in ReadOnlySpan<char> input, ConsoleColor color, bool useLegacy = false)
         {
+            ValidateConsoleColor(color);
+
             if (useLegacy)
             {
-                return Pastel(input, _consoleColorLegacyMapper[color]);
+                return Pastel(input, s_consoleColorLegacyMapper[(int)color]);
             }
 
             return PastelConsole(input, color);
@@ -233,7 +234,7 @@
         {
             if (_enabled)
             {
-                return PastelConsoleColorInternal(in input, _consoleColorMapperFg[color]);
+                return PastelConsoleColorInternal(in input, s_consoleColorMapperFg[(int)color]);
             }
 
             return input.ToString();
@@ -248,7 +249,7 @@
         {
             if (_enabled)
             {
-                return PastelConsoleColorInternal(in input, _consoleColorMapperBg[color]);
+                return PastelConsoleColorInternal(in input, s_consoleColorMapperBg[(int)color]);
             }
 
             return input.ToString();
@@ -330,9 +331,11 @@
         /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
         public static string PastelBg(this in ReadOnlySpan<char> input, ConsoleColor color, bool useLegacy = false)
         {
+            ValidateConsoleColor(color);
+
             if (useLegacy)
             {
-                return PastelBg(input, _consoleColorLegacyMapper[color]);
+                return PastelBg(input, s_consoleColorLegacyMapper[(int)color]);
             }
 
             return PastelConsoleBg(input, color);
@@ -773,6 +776,20 @@
         {
             segment.CopyTo(destination.Slice(currentIndex));
             currentIndex += segment.Length;
+        }
+
+        /// <summary>
+        /// Throws if the specified value is not one of the defined <see cref="ConsoleColor"/> members, as all mappers are indexed by its numeric value.
+        /// </summary>
+        /// <param name="color">The console color to validate.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void ValidateConsoleColor(ConsoleColor color)
+        {
+            // A single unsigned comparison covers both negative values and values greater than White (15)
+            if ((uint)color > (uint)ConsoleColor.White)
+            {
+                throw new ArgumentOutOfRangeException(nameof(color), color, $"Undefined {nameof(ConsoleColor)} value.");
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
