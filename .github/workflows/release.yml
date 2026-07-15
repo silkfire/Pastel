@@ -5,7 +5,8 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    # Must run on Windows: the package targets net462, whose reference assemblies are preinstalled here but absent on the Ubuntu runners
+    runs-on: windows-latest
 
     permissions:
       id-token: write
