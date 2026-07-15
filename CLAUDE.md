@@ -106,6 +106,18 @@ xUnit, `net462;net8.0;net9.0`. Nested classes group by concern; methods read `Gi
 - Internals are reached through `InternalsVisibleTo`, declared in `src/Pastel.csproj`.
 - **A test for a target-framework-specific bug must be run against the unfixed code**, and it should fail on the affected framework only. Several bugs here reproduce on exactly one target framework, so a test that passes everywhere before the fix is testing nothing.
 
+**The test suite is environment-sensitive, and passing locally proves little.** Pastel disables itself in a CI/CD environment, so anything asserting on colored output fails on a build server unless it's in the `ColorOutputEnabledCollection`, whose fixture calls `Enable()`. `EnvironmentTests` has the mirror problem: it enumerates every variable of the process, so a real `CI` or `GITHUB_ACTION` variable is detected alongside the one under test — it suppresses the known ambient names and restores them afterwards.
+
+Check a change against all three before trusting it:
+
+```powershell
+dotnet test -c Release                                    # local
+$env:CI = 'true';     dotnet test -c Release; Remove-Item Env:\CI
+$env:NO_COLOR = '1';  dotnet test -c Release; Remove-Item Env:\NO_COLOR
+```
+
+This bug existed from the beginning and stayed invisible because the release workflow had never once run. Its first run failed with 60/114/8 failures across the three target frameworks — differing counts for identical code, which looks like a race but isn't; it's just test ordering deciding who last touched the shared `_enabled` flag.
+
 
 ## Generated files
 
