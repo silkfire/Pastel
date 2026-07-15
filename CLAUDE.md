@@ -108,17 +108,23 @@ xUnit, `net462;net8.0;net9.0`. Nested classes group by concern; methods read `Gi
 - Internals are reached through `InternalsVisibleTo`, declared in `src/Pastel.csproj`.
 - **A test for a target-framework-specific bug must be run against the unfixed code**, and it should fail on the affected framework only. Several bugs here reproduce on exactly one target framework, so a test that passes everywhere before the fix is testing nothing.
 
-**The test suite is environment-sensitive, and passing locally proves little.** Pastel disables itself in a CI/CD environment, so anything asserting on colored output fails on a build server unless it's in the `ColorOutputEnabledCollection`, whose fixture calls `Enable()`. `EnvironmentTests` has the mirror problem: it enumerates every variable of the process, so a real `CI` or `GITHUB_ACTION` variable is detected alongside the one under test — it suppresses the known ambient names and restores them afterwards.
+**The test suite is environment-sensitive, and passing locally proves little.** Pastel disables itself in a CI/CD environment, so anything asserting on colored output fails on a build server unless it's in the `ColorOutputEnabledCollection`, whose fixture calls `Enable()`.
 
-Check a change against all three before trusting it:
+`EnvironmentTests` has the mirror problem: the detection reads *every* variable of the process, so whatever the host build server sets is detected alongside the variable under test, and every `ExpectedOutcome: true` case fails. It suppresses the ambient ones for the duration of each test and restores them afterwards — **by prefix, mirroring the detectors themselves, not by a list of names**. That distinction is the whole point: `IsGitHubAction` matches a `GITHUB_ACTION` *prefix*, and a real runner sets `GITHUB_ACTION_REF` and `GITHUB_ACTION_REPOSITORY` too, so a name list silently misses them and the tests still fail on CI. If a detector's rule changes, `_detectedEnvironmentVariablePrefixes` has to change with it.
+
+Check a change against each of these before trusting it. Note `CI=true` alone is **not** a sufficient rehearsal — it misses the prefixed variables, which is exactly how the second CI failure got through:
 
 ```powershell
-dotnet test -c Release                                    # local
-$env:CI = 'true';     dotnet test -c Release; Remove-Item Env:\CI
+dotnet test -c Release                                   # local
 $env:NO_COLOR = '1';  dotnet test -c Release; Remove-Item Env:\NO_COLOR
+
+# A realistic GitHub Actions environment, prefixed variables included
+$env:CI = 'true'; $env:GITHUB_ACTIONS = 'true'; $env:GITHUB_ACTION_REF = 'v1'; $env:GITHUB_ACTION_REPOSITORY = 'actions/checkout'
+dotnet test -c Release
+Remove-Item Env:\CI, Env:\GITHUB_ACTIONS, Env:\GITHUB_ACTION_REF, Env:\GITHUB_ACTION_REPOSITORY
 ```
 
-This bug existed from the beginning and stayed invisible because the release workflow had never once run. Its first run failed with 60/114/8 failures across the three target frameworks — differing counts for identical code, which looks like a race but isn't; it's just test ordering deciding who last touched the shared `_enabled` flag.
+This bug existed from the beginning and stayed invisible because the release workflow had never once run. Its first run failed with 60/114/8 failures across the three target frameworks — differing counts for identical code, which looks like a race but isn't; it's just test ordering deciding who last touched the shared `_enabled` flag. **Identical counts across all three, by contrast, mean a deterministic bug** — that's what the second run's 8/8/8 was.
 
 
 ## Generated files
