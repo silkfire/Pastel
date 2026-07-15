@@ -5,17 +5,23 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Authors>Gabriel Bider</Authors>
     <PackageTags>console colour color colors colours colourful colorful colourize colorize ansi NO_COLOR</PackageTags>
-    <Copyright>Copyright © 2025</Copyright>
+    <Copyright>Copyright © 2026</Copyright>
     <PackageProjectUrl>https://github.com/silkfire/Pastel</PackageProjectUrl>
     <Description>A tiny utility class that makes colorizing console output a breeze.</Description>
     <DocumentationFile>./Pastel.xml</DocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
-    <Version>7.0.1</Version>
-    <AssemblyVersion>7.0.1.0</AssemblyVersion>
-    <PackageVersion>7.0.1</PackageVersion>
-    <PackageReleaseNotes>v7.0.1 Use terminal theme-defined ANSI base colors as default for the ConsoleColor overload</PackageReleaseNotes>
+    <Version>8.0.0</Version>
+    <AssemblyVersion>8.0.0.0</AssemblyVersion>
+    <PackageVersion>8.0.0</PackageVersion>
+    <PackageReleaseNotes>v8.0.0
+* Fix a crash on .NET Framework when a color string ended with a reset followed by a partial escape sequence
+* Rename the ConsoleColor useLegacy parameter to useWebColors (breaking: recompile required if passed by name)
+* Throw ArgumentOutOfRangeException instead of KeyNotFoundException for an undefined ConsoleColor value (breaking)
+* Name the public parameter in the invalid hexadecimal color exception
+* Only honor NO_COLOR when it is non-empty, as the specification requires
+* Improve the performance of the ConsoleColor overloads and reduce allocations across all overloads</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
