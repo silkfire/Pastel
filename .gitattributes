@@ -1,0 +1,9 @@
+# Take git out of the line ending business entirely: store and check out every file
+# byte for byte, exactly as written. Without this, the line endings that end up
+# committed depend on each contributor's core.autocrlf, which is what caused the
+# repeated "Fix line endings" commits.
+#
+# Sources are CRLF (as Visual Studio writes them) and the workflows, README and
+# LICENSE are LF. Both are preserved as-is; match the file you're editing.
+
+* -text
