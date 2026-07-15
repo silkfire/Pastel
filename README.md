@@ -57,6 +57,34 @@ Using a `Color`/`ConsoleColor` argument pairs very well with ReSharper as the ex
 ![ReSharper color object underlining](https://raw.githubusercontent.com/silkfire/Pastel/master/img/resharper-coloring.png)
 
 
+## ConsoleColor and web colors
+
+By default, a `ConsoleColor` argument emits the corresponding ANSI base color code, which lets the terminal render it using its own theme. Pass `useWebColors: true` to instead emit the fixed web color that the value represents:
+
+```cs
+"Colorize me".Pastel(ConsoleColor.Red);                      // Themed by the terminal
+"Colorize me".Pastel(ConsoleColor.Red, useWebColors: true);  // Always #FF0000
+```
+
+The web colors follow the combined CSS3 list. For the two names where the web and X11 definitions disagree, the web value is used:
+
+| Color | Pastel | X11 |
+| ----- | ------ | --- |
+| `Gray` | **#808080** | #BEBEBE |
+| `Green` | **#008000** | #00FF00 (the web's `Lime`) |
+
+An inherited quirk worth knowing about: **`DarkGray` (#A9A9A9) is lighter than `Gray` (#808080)**. `DarkGray` descends from X11 while `Gray` descends from the web, and the combined list keeps both. This is intentional and matches `System.Drawing.Color`.
+
+Note that these are *not* the Windows console palette values (where `Gray` is #C0C0C0 and `DarkGray` is #808080).
+
+Colors outside the 16 `ConsoleColor` names — such as `Maroon` or `Purple` — are reached through the `Color` or hexadecimal overloads:
+
+```cs
+"Colorize me".Pastel(Color.Maroon);   // #800000
+"Colorize me".Pastel("#B03060");      // X11 Maroon
+```
+
+
 ## Background colors
 
 Pastel also supports background colors. The syntax is exactly the same except that the method is called `PastelBg`.  

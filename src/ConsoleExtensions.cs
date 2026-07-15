@@ -48,7 +48,9 @@
 
         // All three mappers are indexed by the numeric value of the ConsoleColor enum, which is contiguous in the range 0-15
 
-        private static readonly Color[] s_consoleColorLegacyMapper = {
+        // The combined CSS3 list: the Web value is used for every name where Web and X11 disagree (Gray, Green), the X11 value where they agree (the Dark* shades).
+        // This mixed heritage is why DarkGray (#A9A9A9, from X11) is lighter than Gray (#808080, from the web). Note that this is not the Windows console palette.
+        private static readonly Color[] s_consoleColorWebMapper = {
                                                                          /* Black       */ Color.FromArgb(0x000000),
                                                                          /* DarkBlue    */ Color.FromArgb(0x00008B),
                                                                          /* DarkGreen   */ Color.FromArgb(0x006400),
@@ -56,10 +58,10 @@
                                                                          /* DarkRed     */ Color.FromArgb(0x8B0000),
                                                                          /* DarkMagenta */ Color.FromArgb(0x8B008B),
                                                                          /* DarkYellow  */ Color.FromArgb(0x808000),
-                                                                         /* Gray        */ Color.FromArgb(0x808080),
-                                                                         /* DarkGray    */ Color.FromArgb(0xA9A9A9),
+                                                                         /* Gray        */ Color.FromArgb(0x808080),   // Web Gray; X11 Gray is #BEBEBE
+                                                                         /* DarkGray    */ Color.FromArgb(0xA9A9A9),   // Lighter than Gray above, by virtue of descending from X11
                                                                          /* Blue        */ Color.FromArgb(0x0000FF),
-                                                                         /* Green       */ Color.FromArgb(0x008000),
+                                                                         /* Green       */ Color.FromArgb(0x008000),   // Web Green; X11 Green is #00FF00 (the web's Lime)
                                                                          /* Cyan        */ Color.FromArgb(0x00FFFF),
                                                                          /* Red         */ Color.FromArgb(0xFF0000),
                                                                          /* Magenta     */ Color.FromArgb(0xFF00FF),
@@ -204,22 +206,24 @@
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
-        public static string Pastel(this string input, ConsoleColor color, bool useLegacy = false) => Pastel(input.AsSpan(), color, useLegacy);
+        /// <param name="useWebColors">If <see langword="true"/>, indicates to use the fixed web colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.
+        /// <para>Note that <see cref="ConsoleColor.DarkGray"/> (#A9A9A9) is lighter than <see cref="ConsoleColor.Gray"/> (#808080), as the former descends from X11 and the latter from the web.</para></param>
+        public static string Pastel(this string input, ConsoleColor color, bool useWebColors = false) => Pastel(input.AsSpan(), color, useWebColors);
 
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
-        public static string Pastel(this in ReadOnlySpan<char> input, ConsoleColor color, bool useLegacy = false)
+        /// <param name="useWebColors">If <see langword="true"/>, indicates to use the fixed web colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.
+        /// <para>Note that <see cref="ConsoleColor.DarkGray"/> (#A9A9A9) is lighter than <see cref="ConsoleColor.Gray"/> (#808080), as the former descends from X11 and the latter from the web.</para></param>
+        public static string Pastel(this in ReadOnlySpan<char> input, ConsoleColor color, bool useWebColors = false)
         {
             ValidateConsoleColor(color);
 
-            if (useLegacy)
+            if (useWebColors)
             {
-                return Pastel(input, s_consoleColorLegacyMapper[(int)color]);
+                return Pastel(input, s_consoleColorWebMapper[(int)color]);
             }
 
             return PastelConsole(input, color);
@@ -320,22 +324,24 @@
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
-        public static string PastelBg(this string input, ConsoleColor color, bool useLegacy = false) => PastelBg(input.AsSpan(), color, useLegacy);
+        /// <param name="useWebColors">If <see langword="true"/>, indicates to use the fixed web colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.
+        /// <para>Note that <see cref="ConsoleColor.DarkGray"/> (#A9A9A9) is lighter than <see cref="ConsoleColor.Gray"/> (#808080), as the former descends from X11 and the latter from the web.</para></param>
+        public static string PastelBg(this string input, ConsoleColor color, bool useWebColors = false) => PastelBg(input.AsSpan(), color, useWebColors);
 
         /// <summary>
-        /// Returns a string wrapped in an ANSI foreground color code using the specified color.
+        /// Returns a string wrapped in an ANSI background color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
         /// <param name="color">The color to use on the specified string.</param>
-        /// <param name="useLegacy">If <see langword="true"/>, indicates to use the fixed colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.</param>
-        public static string PastelBg(this in ReadOnlySpan<char> input, ConsoleColor color, bool useLegacy = false)
+        /// <param name="useWebColors">If <see langword="true"/>, indicates to use the fixed web colour that the <see cref="ConsoleColor"/> value represents instead of its theme-defined value configured in the terminal.
+        /// <para>Note that <see cref="ConsoleColor.DarkGray"/> (#A9A9A9) is lighter than <see cref="ConsoleColor.Gray"/> (#808080), as the former descends from X11 and the latter from the web.</para></param>
+        public static string PastelBg(this in ReadOnlySpan<char> input, ConsoleColor color, bool useWebColors = false)
         {
             ValidateConsoleColor(color);
 
-            if (useLegacy)
+            if (useWebColors)
             {
-                return PastelBg(input, s_consoleColorLegacyMapper[(int)color]);
+                return PastelBg(input, s_consoleColorWebMapper[(int)color]);
             }
 
             return PastelConsoleBg(input, color);

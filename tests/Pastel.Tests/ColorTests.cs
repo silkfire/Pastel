@@ -63,7 +63,7 @@ namespace Pastel.Tests
             [InlineData(ConsoleColor.Magenta,     255,   0, 255)]
             [InlineData(ConsoleColor.Cyan,          0, 255, 255)]
             [InlineData(ConsoleColor.White,       255, 255, 255)]
-            public void Given_Specified_ConsoleColorLegacy_And_Input_String_Should_Return_Specified_String(ConsoleColor color, int expectedRValue, int expectedGValue, int expectedBValue)
+            public void Given_Specified_ConsoleColorWeb_And_Input_String_Should_Return_Specified_String(ConsoleColor color, int expectedRValue, int expectedGValue, int expectedBValue)
             {
                 const string inputString = "test";
 
@@ -196,7 +196,7 @@ namespace Pastel.Tests
             [InlineData(ConsoleColor.Magenta,     255,   0, 255)]
             [InlineData(ConsoleColor.Cyan,          0, 255, 255)]
             [InlineData(ConsoleColor.White,       255, 255, 255)]
-            public void Given_Specified_ConsoleColorLegacy_And_Input_String_Should_Return_Specified_String(ConsoleColor color, int expectedRValue, int expectedGValue, int expectedBValue)
+            public void Given_Specified_ConsoleColorWeb_And_Input_String_Should_Return_Specified_String(ConsoleColor color, int expectedRValue, int expectedGValue, int expectedBValue)
             {
                 const string inputString = "test";
 
@@ -484,7 +484,7 @@ namespace Pastel.Tests
                 ColorOutputEnabledTest(expectedAnsiColorCodePart, outputAnsiColorString1, outputAnsiColorString2);
             }
 
-            private static void ColorOutputEnabledTestConsoleColorLegacy(ConsoleColor color, string expectedAnsiColorCodePart)
+            private static void ColorOutputEnabledTestConsoleColorWeb(ConsoleColor color, string expectedAnsiColorCodePart)
             {
                 var outputAnsiColorString1 = _input.Pastel(  color, true);
                 var outputAnsiColorString2 = _input.PastelBg(color, true);
@@ -533,7 +533,7 @@ namespace Pastel.Tests
                 ColorOutputDisabledTest(outputAnsiColorString1, outputAnsiColorString2);
             }
 
-            private static void ColorOutputDisabledTestConsoleColorLegacy(ConsoleColor color)
+            private static void ColorOutputDisabledTestConsoleColorWeb(ConsoleColor color)
             {
                 var outputAnsiColorString1 = _input.Pastel(  color, true);
                 var outputAnsiColorString2 = _input.PastelBg(color, true);
@@ -602,24 +602,24 @@ namespace Pastel.Tests
             [InlineData(ConsoleColor.Magenta,     "255;0;255")]
             [InlineData(ConsoleColor.Yellow,      "255;255;0")]
             [InlineData(ConsoleColor.White,       "255;255;255")]
-            public void Output_Should_Honor_Current_State_When_Switching_Between_States_ConsoleColorLegacy(ConsoleColor color, string expectedAnsiColorCodePart)
+            public void Output_Should_Honor_Current_State_When_Switching_Between_States_ConsoleColorWeb(ConsoleColor color, string expectedAnsiColorCodePart)
             {
                 // Enable color output
 
                 ConsoleExtensions.Enable();
-                ColorOutputEnabledTestConsoleColorLegacy(color, expectedAnsiColorCodePart);
+                ColorOutputEnabledTestConsoleColorWeb(color, expectedAnsiColorCodePart);
 
 
                 // Disable color output
 
                 ConsoleExtensions.Disable();
-                ColorOutputDisabledTestConsoleColorLegacy(color);
+                ColorOutputDisabledTestConsoleColorWeb(color);
 
 
                 // Re-enable color output
 
                 ConsoleExtensions.Enable();
-                ColorOutputEnabledTestConsoleColorLegacy(color, expectedAnsiColorCodePart);
+                ColorOutputEnabledTestConsoleColorWeb(color, expectedAnsiColorCodePart);
             }
 
             [Theory]
