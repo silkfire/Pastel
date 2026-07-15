@@ -761,7 +761,7 @@
 
 #if NET8_0_OR_GREATER
             string pastelString;
-            
+
             unsafe
             {
                 fixed (char* inputPtr = input)
@@ -777,10 +777,10 @@
                                                  static (buf, ctx) =>
                                                  {
                                                      int i = 0;
-                                                 
+
                                                      buf[i++] = '\x1b';
                                                      buf[i++] = '[';
-            
+
                                                      ctx.ConsoleColorValue.CopyTo(buf.Slice(i));
                                                      i += ctx.ConsoleColorValue.Length;
 
@@ -828,10 +828,10 @@
             var bufSpan = buf.AsSpan();
 
             int i = 0;
-                                                 
+
             bufSpan[i++] = '\x1b';
             bufSpan[i++] = '[';
-            
+
             consoleColorValue.CopyTo(bufSpan.Slice(i));
             i += consoleColorValue.Length;
 
