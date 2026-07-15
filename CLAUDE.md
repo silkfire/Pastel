@@ -78,7 +78,24 @@ There is **no `.editorconfig`**; the conventions exist only by example. Match th
 - `#if`/`#else`/`#endif` at **column 0**, never indented.
 - Heavy column alignment: `=` signs line up within a block, array initializers align under the opening construct, and operators lead continuation lines (note the padding after `return`).
 - Static field prefixes are inconsistent by any standard rule, so match the neighbouring field *of the same shape*: arrays get `s_`, while dictionaries, bools and `char` consts get `_`. Win32 interop constants are `SCREAMING_SNAKE`.
-- CRLF line endings, UTF-8 BOM. There's no `.gitattributes`, and line endings have needed fixing twice.
+
+
+## Line endings
+
+`.gitattributes` sets `* -text`, so git stores and checks out every file byte for byte and converts nothing. That makes the endings entirely the writing tool's responsibility.
+
+The repo is a deliberate mix, and both sides should stay as they are:
+
+- **CRLF** — `.cs`, `.csproj`, `.sln`, `.gitignore` (what Visual Studio writes)
+- **LF** — `.github/workflows/*.yml`, `README.md`, `LICENSE`, this file
+
+**Creating a new `.cs` file is the trap.** Anything that writes LF by default will commit an LF source file into a CRLF tree, and nothing will convert it for you — that's what produced the four "Fix line endings" commits, the last of which was cleaning up exactly this mistake. Editing an existing file is safe, since its endings are already there. Check before committing a new one:
+
+```powershell
+git ls-files --eol src/YourNewFile.cs   # want i/crlf for sources
+```
+
+Sources are also UTF-8 with BOM.
 
 
 ## Tests
