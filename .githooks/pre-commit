@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# Normalise staged C# sources to the repo's on-disk conventions: CRLF line
+# endings and UTF-8 with no BOM.
+#
+# .gitattributes sets "* -text", so git converts nothing and the bytes that get
+# committed are whatever the writing tool produced. .editorconfig only binds
+# tools that read it -- an editor will honour end_of_line = crlf, but anything
+# writing bytes directly (scripts, agents) bypasses it entirely. This hook is
+# the backstop that runs regardless of what staged the file.
+#
+# It fixes rather than rejects: offending files are rewritten and re-staged, so
+# a commit is never blocked by this.
+#
+# Install (once per clone):
+#     git config core.hooksPath .githooks
+
+set -e
+
+fixed=
+
+# Only files staged as added/copied/modified, and only .cs. Setting IFS to a
+# newline alone keeps paths with spaces intact.
+IFS='
+'
+for file in $(git diff --cached --name-only --diff-filter=ACM -- '*.cs'); do
+    # Skip anything staged and then removed from the working tree.
+    [ -f "$file" ] || continue
+
+    before=$(git hash-object -- "$file")
+
+    # Strip a leading UTF-8 BOM, drop every CR, then put one back on each line
+    # ending. That order is what makes this idempotent: a file already in the
+    # right shape is rewritten to byte-identical content and re-stages nothing.
+    tmp="$file.pre-commit.$$"
+    sed -e '1s/^\xEF\xBB\xBF//' -e 's/\r$//' -e 's/$/\r/' -- "$file" > "$tmp"
+    mv -- "$tmp" "$file"
+
+    if [ "$before" != "$(git hash-object -- "$file")" ]; then
+        git add -- "$file"
+        fixed="$fixed  $file
+"
+    fi
+done
+
+if [ -n "$fixed" ]; then
+    printf 'pre-commit: normalised to CRLF, no BOM, and re-staged:\n%s' "$fixed"
+fi
+
+exit 0
