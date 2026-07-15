@@ -43,6 +43,9 @@
             yield return ("TEAMcity_SOMEKEY",  "somevalue",             false);
             yield return ("NO_COLOR",          "true",                  false);
             yield return ("no_color",          "true",                  false);
+            yield return ("NO_COLOR",          "1",                     false);
+            yield return ("NO_COLOR",          "",                       true);   // https://no-color.org/ requires the variable to be non-empty
+            yield return ("no_color",          "",                       true);
             yield return ("GITHUB_ACTION",     "somevalue",             false);
             yield return ("GitHuB_action",     "somevalue",             false);
             yield return ("CI",                "true",                  false);

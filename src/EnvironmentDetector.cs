@@ -1,9 +1,10 @@
-﻿namespace Pastel
+namespace Pastel
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security;
 
     internal static class EnvironmentDetector
     {
@@ -14,7 +15,17 @@
         /// </summary>
         public static bool ColorsEnabled()
         {
-            return Environment.GetEnvironmentVariable(DisableEnvironmentDetectionEnvironmentVariableName) != null || !HasEnvironmentVariable();
+            try
+            {
+                return Environment.GetEnvironmentVariable(DisableEnvironmentDetectionEnvironmentVariableName) != null || !HasEnvironmentVariable();
+            }
+            catch (SecurityException)
+            {
+                // Reading the user and machine scopes touches the registry, which a restricted environment may deny.
+                // This runs from a type initializer, so letting it escape would take down the whole library.
+
+                return true;
+            }
         }
 
 #if NET9_0_OR_GREATER
@@ -55,14 +66,14 @@
             return key.StartsWith("TEAMCITY_", StringComparison.OrdinalIgnoreCase);
         }
 
-        // https://no-color.org/
+        // https://no-color.org/ - the variable has to be present AND non-empty
 #if NET9_0_OR_GREATER
         private static bool NoColor(ReadOnlySpan<char> key, ReadOnlySpan<char> value)
 #else
         private static bool NoColor(string key, string value)
 #endif
         {
-            return key.Equals("NO_COLOR", StringComparison.OrdinalIgnoreCase);
+            return key.Equals("NO_COLOR", StringComparison.OrdinalIgnoreCase) && value.Length > 0;
         }
 
         // Set by GitHub Actions
@@ -98,17 +109,16 @@
 
         private static bool HasEnvironmentVariable()
         {
+            // Left lazy on purpose, so that the loop below can stop at the first match instead of materializing every variable first
             var environmentVariables = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process).Cast<DictionaryEntry>()
                                                   .Concat(Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User).Cast<DictionaryEntry>())
                                                   .Concat(Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine).Cast<DictionaryEntry>())
                                                   .Select(de => new KeyValuePair<string, string>(de.Key.ToString(), de.Value != null ? de.Value.ToString() : ""))
 #if NET8_0_OR_GREATER
-                                                  .DistinctBy(kvp => kvp.Key)
+                                                  .DistinctBy(kvp => kvp.Key);
 #else
-                                                  .GroupBy(kvp => kvp.Key, (_, kvps) => kvps.First())
+                                                  .GroupBy(kvp => kvp.Key, (_, kvps) => kvps.First());
 #endif
-                                                  .ToList()
-                                                  .AsReadOnly();
 
             foreach (var environmentVariable in environmentVariables)
             {

@@ -246,6 +246,34 @@ namespace Pastel.Tests
             }
         }
 
+        public class InvalidHexColor
+        {
+            [InlineData("nothex")]
+            [InlineData("#12345")]
+            [InlineData("")]
+            [InlineData("#")]
+            [InlineData("#gggggg")]
+            [Theory]
+            public void An_Invalid_Hex_Color_String_Should_Throw_Naming_The_Public_Parameter(string invalidHexColor)
+            {
+                var exceptionForeground = Assert.Throws<ArgumentException>(() => "input".Pastel(  invalidHexColor));
+                var exceptionBackground = Assert.Throws<ArgumentException>(() => "input".PastelBg(invalidHexColor));
+
+                Assert.Equal("hexColor", exceptionForeground.ParamName);
+                Assert.Equal("hexColor", exceptionBackground.ParamName);
+            }
+
+            [InlineData("#abc", "#aabbcc")]
+            [InlineData("abc",  "aabbcc")]
+            [InlineData("#FFF", "#FFFFFF")]
+            [Theory]
+            public void A_Three_Digit_Hex_Color_String_Should_Expand_Each_Digit(string shorthandHexColor, string equivalentHexColor)
+            {
+                Assert.Equal("input".Pastel(  equivalentHexColor), "input".Pastel(  shorthandHexColor));
+                Assert.Equal("input".PastelBg(equivalentHexColor), "input".PastelBg(shorthandHexColor));
+            }
+        }
+
         public class UndefinedConsoleColor
         {
             [InlineData(-1)]

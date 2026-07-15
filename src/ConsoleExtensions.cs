@@ -1,4 +1,4 @@
-﻿namespace Pastel
+namespace Pastel
 {
     using System;
     using System.Collections.Generic;
@@ -51,23 +51,23 @@
         // The combined CSS3 list: the Web value is used for every name where Web and X11 disagree (Gray, Green), the X11 value where they agree (the Dark* shades).
         // This mixed heritage is why DarkGray (#A9A9A9, from X11) is lighter than Gray (#808080, from the web). Note that this is not the Windows console palette.
         private static readonly Color[] s_consoleColorWebMapper = {
-                                                                         /* Black       */ Color.FromArgb(0x000000),
-                                                                         /* DarkBlue    */ Color.FromArgb(0x00008B),
-                                                                         /* DarkGreen   */ Color.FromArgb(0x006400),
-                                                                         /* DarkCyan    */ Color.FromArgb(0x008B8B),
-                                                                         /* DarkRed     */ Color.FromArgb(0x8B0000),
-                                                                         /* DarkMagenta */ Color.FromArgb(0x8B008B),
-                                                                         /* DarkYellow  */ Color.FromArgb(0x808000),
-                                                                         /* Gray        */ Color.FromArgb(0x808080),   // Web Gray; X11 Gray is #BEBEBE
-                                                                         /* DarkGray    */ Color.FromArgb(0xA9A9A9),   // Lighter than Gray above, by virtue of descending from X11
-                                                                         /* Blue        */ Color.FromArgb(0x0000FF),
-                                                                         /* Green       */ Color.FromArgb(0x008000),   // Web Green; X11 Green is #00FF00 (the web's Lime)
-                                                                         /* Cyan        */ Color.FromArgb(0x00FFFF),
-                                                                         /* Red         */ Color.FromArgb(0xFF0000),
-                                                                         /* Magenta     */ Color.FromArgb(0xFF00FF),
-                                                                         /* Yellow      */ Color.FromArgb(0xFFFF00),
-                                                                         /* White       */ Color.FromArgb(0xFFFFFF)
-                                                                     };
+                                                                      /* Black       */ Color.FromArgb(0x000000),
+                                                                      /* DarkBlue    */ Color.FromArgb(0x00008B),
+                                                                      /* DarkGreen   */ Color.FromArgb(0x006400),
+                                                                      /* DarkCyan    */ Color.FromArgb(0x008B8B),
+                                                                      /* DarkRed     */ Color.FromArgb(0x8B0000),
+                                                                      /* DarkMagenta */ Color.FromArgb(0x8B008B),
+                                                                      /* DarkYellow  */ Color.FromArgb(0x808000),
+                                                                      /* Gray        */ Color.FromArgb(0x808080),   // Web Gray; X11 Gray is #BEBEBE
+                                                                      /* DarkGray    */ Color.FromArgb(0xA9A9A9),   // Lighter than Gray above, by virtue of descending from X11
+                                                                      /* Blue        */ Color.FromArgb(0x0000FF),
+                                                                      /* Green       */ Color.FromArgb(0x008000),   // Web Green; X11 Green is #00FF00 (the web's Lime)
+                                                                      /* Cyan        */ Color.FromArgb(0x00FFFF),
+                                                                      /* Red         */ Color.FromArgb(0xFF0000),
+                                                                      /* Magenta     */ Color.FromArgb(0xFF00FF),
+                                                                      /* Yellow      */ Color.FromArgb(0xFFFF00),
+                                                                      /* White       */ Color.FromArgb(0xFFFFFF)
+                                                                  };
 
         private static readonly char[][] s_consoleColorMapperFg = {
                                                                       /* Black       */ new[] { '3', '0' },
@@ -263,28 +263,28 @@
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
-        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported formats: [#]RRGGBB and [#]RGB (case-insensitive).</para></param>
         public static string Pastel(this string input, in string hexColor) => Pastel(input.AsSpan(), hexColor.AsSpan());
 
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
-        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported formats: [#]RRGGBB and [#]RGB (case-insensitive).</para></param>
         public static string Pastel(this string input, in ReadOnlySpan<char> hexColor) => Pastel(input.AsSpan(), hexColor);
 
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
-        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported formats: [#]RRGGBB and [#]RGB (case-insensitive).</para></param>
         public static string Pastel(this in ReadOnlySpan<char> input, in string hexColor) => Pastel(input, hexColor.AsSpan());
 
         /// <summary>
         /// Returns a string wrapped in an ANSI foreground color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
-        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported formats: [#]RRGGBB and [#]RGB (case-insensitive).</para></param>
         public static string Pastel(this in ReadOnlySpan<char> input, in ReadOnlySpan<char> hexColor)
         {
             if (_enabled)
@@ -351,28 +351,28 @@
         /// Returns a string wrapped in an ANSI background color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
-        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported formats: [#]RRGGBB and [#]RGB (case-insensitive).</para></param>
         public static string PastelBg(this string input, string hexColor) => PastelBg(input.AsSpan(), hexColor.AsSpan());
 
         /// <summary>
         /// Returns a string wrapped in an ANSI background color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
-        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported formats: [#]RRGGBB and [#]RGB (case-insensitive).</para></param>
         public static string PastelBg(this string input, in ReadOnlySpan<char> hexColor) => PastelBg(input.AsSpan(), hexColor);
 
         /// <summary>
         /// Returns a string wrapped in an ANSI background color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
-        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported formats: [#]RRGGBB and [#]RGB (case-insensitive).</para></param>
         public static string PastelBg(this in ReadOnlySpan<char> input, string hexColor) => PastelBg(input, hexColor.AsSpan());
 
         /// <summary>
         /// Returns a string wrapped in an ANSI background color code using the specified color.
         /// </summary>
         /// <param name="input">The string to color.</param>
-        /// <param name="hexColor">The color to use on the specified string.<para>Supported format: [#]RRGGBB (case-insensitive).</para></param>
+        /// <param name="hexColor">The color to use on the specified string.<para>Supported formats: [#]RRGGBB and [#]RGB (case-insensitive).</para></param>
         public static string PastelBg(this in ReadOnlySpan<char> input, in ReadOnlySpan<char> hexColor)
         {
             if (_enabled)
@@ -908,10 +908,13 @@
             return (byte)(result + add);
         }
 
+        // The parameter is named hexColor on every public overload, so that's the name callers have to be given
+        private const string HexColorParameterName = "hexColor";
+
 #if NET8_0_OR_GREATER
-        private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new($"Invalid hexadecimal color value encountered: {hexString}", nameof(hexString));
+        private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new($"Invalid hexadecimal color value encountered: {hexString}", HexColorParameterName);
 #else
-        private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new ArgumentException($"Invalid hexadecimal color value encountered: {hexString.ToString()}", nameof(hexString));
+        private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new ArgumentException($"Invalid hexadecimal color value encountered: {hexString.ToString()}", HexColorParameterName);
 #endif
 
 #if NET8_0_OR_GREATER
