@@ -1,9 +1,6 @@
 ﻿namespace Pastel
 {
     using System;
-#if NET9_0_OR_GREATER
-    using System.Buffers;
-#endif
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Drawing;
@@ -144,10 +141,6 @@
                                                               255, 255, 255, 255, 255, 255, 255, 160, 176, 192,
                                                               208, 224, 240
                                                           };
-
-#if NET9_0_OR_GREATER
-        private static readonly SearchValues<string> s_colorEscapeStartSequence = SearchValues.Create([ "\x1b[38", "\x1b[48" ], StringComparison.Ordinal);
-#endif
 
         static ConsoleExtensions()
         {
@@ -916,38 +909,6 @@
             public required byte BDigitCount { get; init; }
 
             public required bool AddResetSuffix { get; init; }
-        }
-#else
-        private readonly struct StringCreateData
-        {
-            public char ColorPlaneFormatModifierInitialPart { get; }
-
-            public byte R { get; }
-
-            public byte RDigitCount { get; }
-
-            public byte G { get; }
-
-            public byte GDigitCount { get; }
-
-            public byte B { get; }
-
-            public byte BDigitCount { get; }
-
-            public bool AddResetSuffix { get; }
-
-
-            internal StringCreateData(char colorPlaneFormatModifierInitialPart, byte r, byte rDigitCount, byte g, byte gDigitCount, byte b, byte bDigitCount, bool addResetSuffix)
-            {
-                ColorPlaneFormatModifierInitialPart = colorPlaneFormatModifierInitialPart;
-                R = r;
-                RDigitCount = rDigitCount;
-                G = g;
-                GDigitCount = gDigitCount;
-                B = b;
-                BDigitCount = bDigitCount;
-                AddResetSuffix = addResetSuffix;
-            }
         }
 #endif
     }
