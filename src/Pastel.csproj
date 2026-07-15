@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net462;net8.0;net9.0</TargetFrameworks>
@@ -41,7 +41,8 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup Condition="$(DefineConstants.Contains('NET8_0_OR_GREATER'))">
+  <!-- Must be conditioned on the target framework: an ItemGroup is evaluated before the framework-specific DefineConstants are populated, so a $(DefineConstants) check here never matches -->
+  <ItemGroup Condition=" '$(TargetFramework)' != 'net462' ">
     <AssemblyAttribute Include="System.Runtime.CompilerServices.DisableRuntimeMarshalling" />
   </ItemGroup>
 
