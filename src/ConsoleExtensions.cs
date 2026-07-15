@@ -390,89 +390,7 @@
             var gDigitCount = CountDigits(g);
             var bDigitCount = CountDigits(b);
 
-            var formatStringStartColorInsertCount = 0;
-
-            var haystack = input;
-
-            // We're looking for all escape sequence resets (\x[0m) NOT followed by either 1) another reset or 2) a color escape sequence and are NOT at the end of the input string
-            // In summary, all solitary escape sequence resets between the start and end of the input string
-
-            int pos;
-#if NET8_0_OR_GREATER
-            while ((pos = haystack.IndexOf("\x1b[0m")) >= 0)
-#else
-            while ((pos = haystack.IndexOf("\x1b[0m".AsSpan())) >= 0)
-#endif
-            {
-                haystack = haystack.Slice(pos + 4);
-
-                if (haystack.Length > 0)
-                {
-#if NET8_0_OR_GREATER
-                    if (haystack is not ['\x1b', '[', '0', 'm', ..])
-                    {
-                        formatStringStartColorInsertCount++;
-                    }
-#else
-                    if (!haystack.StartsWith("\x1b[".AsSpan()))
-                    {
-                        formatStringStartColorInsertCount++;
-                    }
-                    else
-                    {
-                        var haystackSlice = haystack.Slice(2, 2);
-
-                        if (!haystackSlice.SequenceEqual("0m".AsSpan())) {
-                            formatStringStartColorInsertCount++;
-                        }
-                    }
-#endif
-                }
-            }
-
-            var colorFormatStringInsertPositions = new int[formatStringStartColorInsertCount];
-
-            if (formatStringStartColorInsertCount > 0)
-            {
-                formatStringStartColorInsertCount = 0;
-
-                haystack = input;
-
-                int offsetPos = 0;
-#if NET8_0_OR_GREATER
-                while ((pos = haystack.IndexOf("\x1b[0m")) >= 0)
-#else
-                while ((pos = haystack.IndexOf("\x1b[0m".AsSpan())) >= 0)
-#endif
-                {
-                    haystack = haystack.Slice(pos + 4);
-                    offsetPos += pos + 4;
-
-                    if (haystack.Length > 0)
-                    {
-#if NET8_0_OR_GREATER
-                    if (haystack is not ['\x1b', '[', '0', 'm', ..])
-                    {
-                        colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
-                    }
-#else
-                    if (!haystack.StartsWith("\x1b[".AsSpan()))
-                    {
-                        colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
-                    }
-                    else
-                    {
-                        var haystackSlice = haystack.Slice(2, 2);
-
-                        if (!haystackSlice.SequenceEqual("0m".AsSpan()))
-                        {
-                            colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
-                        }
-                    }
-#endif
-                    }
-                }
-            }
+            var colorFormatStringInsertPositions = ScanColorFormatStringInsertPositions(in input);
 
 #if NET8_0_OR_GREATER
             var addResetSuffix = input is not [.., '\x1b', '[', '0', 'm'];
@@ -668,89 +586,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string PastelConsoleColorInternal(in ReadOnlySpan<char> input, char[] consoleColorValue)
         {
-            var formatStringStartColorInsertCount = 0;
-
-            var haystack = input;
-
-            // We're looking for all escape sequence resets (\x[0m) NOT followed by either 1) another reset or 2) a console color escape sequence and are NOT at the end of the input string
-            // In summary, all solitary escape sequence resets between the start and end of the input string
-
-            int pos;
-#if NET8_0_OR_GREATER
-            while ((pos = haystack.IndexOf("\x1b[0m")) >= 0)
-#else
-            while ((pos = haystack.IndexOf("\x1b[0m".AsSpan())) >= 0)
-#endif
-            {
-                haystack = haystack.Slice(pos + 4);
-
-                if (haystack.Length > 0)
-                {
-#if NET8_0_OR_GREATER
-                    if (haystack is not ['\x1b', '[', '0', 'm', ..])
-                    {
-                        formatStringStartColorInsertCount++;
-                    }
-#else
-                    if (!haystack.StartsWith("\x1b[".AsSpan()))
-                    {
-                        formatStringStartColorInsertCount++;
-                    }
-                    else
-                    {
-                        var haystackSlice = haystack.Slice(2, 2);
-
-                        if (!haystackSlice.SequenceEqual("0m".AsSpan())) {
-                            formatStringStartColorInsertCount++;
-                        }
-                    }
-#endif
-                }
-            }
-
-            var colorFormatStringInsertPositions = new int[formatStringStartColorInsertCount];
-
-            if (formatStringStartColorInsertCount > 0)
-            {
-                formatStringStartColorInsertCount = 0;
-
-                haystack = input;
-
-                int offsetPos = 0;
-#if NET8_0_OR_GREATER
-                while ((pos = haystack.IndexOf("\x1b[0m")) >= 0)
-#else
-                while ((pos = haystack.IndexOf("\x1b[0m".AsSpan())) >= 0)
-#endif
-                {
-                    haystack = haystack.Slice(pos + 4);
-                    offsetPos += pos + 4;
-
-                    if (haystack.Length > 0)
-                    {
-#if NET8_0_OR_GREATER
-                    if (haystack is not ['\x1b', '[', '0', 'm', ..])
-                    {
-                        colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
-                    }
-#else
-                    if (!haystack.StartsWith("\x1b[".AsSpan()))
-                    {
-                        colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
-                    }
-                    else
-                    {
-                        var haystackSlice = haystack.Slice(2, 2);
-
-                        if (!haystackSlice.SequenceEqual("0m".AsSpan()))
-                        {
-                            colorFormatStringInsertPositions[formatStringStartColorInsertCount++] = offsetPos;
-                        }
-                    }
-#endif
-                    }
-                }
-            }
+            var colorFormatStringInsertPositions = ScanColorFormatStringInsertPositions(in input);
 
 #if NET8_0_OR_GREATER
             var addResetSuffix = input is not [.., '\x1b', '[', '0', 'm'];
@@ -871,6 +707,72 @@
 
             return new string(buf);
 #endif
+        }
+
+        /// <summary>
+        /// Locates every escape sequence reset (<c>\x1b[0m</c>) that is neither at the very end of the input nor immediately followed by another reset,
+        /// i.e. all solitary resets between the start and the end of the input string. The color format string has to be re-inserted at each of these
+        /// positions, otherwise the remainder of the input would render uncolored.
+        /// </summary>
+        /// <param name="input">The string to scan.</param>
+        /// <returns>The positions at which the color format string has to be re-inserted.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int[] ScanColorFormatStringInsertPositions(in ReadOnlySpan<char> input)
+        {
+            var formatStringStartColorInsertCount = CountColorFormatStringInsertPositions(in input, null);
+
+            if (formatStringStartColorInsertCount == 0)
+            {
+                return Array.Empty<int>();
+            }
+
+            var colorFormatStringInsertPositions = new int[formatStringStartColorInsertCount];
+
+            CountColorFormatStringInsertPositions(in input, colorFormatStringInsertPositions);
+
+            return colorFormatStringInsertPositions;
+        }
+
+        /// <summary>
+        /// Counts the positions at which the color format string has to be re-inserted, optionally recording them.
+        /// </summary>
+        /// <param name="input">The string to scan.</param>
+        /// <param name="colorFormatStringInsertPositions">If not <see langword="null"/>, receives the positions found. Must be able to hold as many positions as a preceding counting pass reported.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int CountColorFormatStringInsertPositions(in ReadOnlySpan<char> input, int[] colorFormatStringInsertPositions)
+        {
+            var formatStringStartColorInsertCount = 0;
+
+            var haystack  = input;
+            var offsetPos = 0;
+
+            int pos;
+#if NET8_0_OR_GREATER
+            while ((pos = haystack.IndexOf("\x1b[0m")) >= 0)
+#else
+            while ((pos = haystack.IndexOf("\x1b[0m".AsSpan())) >= 0)
+#endif
+            {
+                haystack   = haystack.Slice(pos + 4);
+                offsetPos += pos + 4;
+
+                // A trailing partial escape sequence (e.g. "\x1b[" or "\x1b[0") is not a reset, so it counts as an insert position
+#if NET8_0_OR_GREATER
+                if (haystack is not [] and not ['\x1b', '[', '0', 'm', ..])
+#else
+                if (!haystack.IsEmpty && !haystack.StartsWith("\x1b[0m".AsSpan()))
+#endif
+                {
+                    if (colorFormatStringInsertPositions != null)
+                    {
+                        colorFormatStringInsertPositions[formatStringStartColorInsertCount] = offsetPos;
+                    }
+
+                    formatStringStartColorInsertCount++;
+                }
+            }
+
+            return formatStringStartColorInsertCount;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

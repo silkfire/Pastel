@@ -397,6 +397,36 @@ namespace Pastel.Tests
                 Assert.Equal($"\x1b[38;2;255;20;147mSTART_\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[38;2;255;20;147m____\x1b[48;2;220;20;60m\x1b[38;2;255;255;0m[TEST2]\x1b[0m\x1b[38;2;255;20;147m{invalidEscapeSequence}_END\x1b[0m", outputAnsiColorString);
             }
 
+            [InlineData("\x1b")]
+            [InlineData("\x1b[")]
+            [InlineData("\x1b[0")]
+            [InlineData("\x1b[38")]
+            [InlineData("\x1b[48")]
+            [Theory]
+            public void A_Color_String_Ending_With_A_Reset_Followed_By_A_Partial_Escape_Sequence_Must_Be_Correctly_Closed(string trailingPartialEscapeSequence)
+            {
+                var input = $"START_{"[TEST1]".Pastel(Color.Yellow)}{trailingPartialEscapeSequence}";
+
+                var outputAnsiColorString = input.Pastel(Color.DeepPink);
+
+                Assert.Equal($"\x1b[38;2;255;20;147mSTART_\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[38;2;255;20;147m{trailingPartialEscapeSequence}\x1b[0m", outputAnsiColorString);
+            }
+
+            [InlineData("\x1b")]
+            [InlineData("\x1b[")]
+            [InlineData("\x1b[0")]
+            [InlineData("\x1b[38")]
+            [InlineData("\x1b[48")]
+            [Theory]
+            public void A_ConsoleColor_String_Ending_With_A_Reset_Followed_By_A_Partial_Escape_Sequence_Must_Be_Correctly_Closed(string trailingPartialEscapeSequence)
+            {
+                var input = $"START_{"[TEST1]".Pastel(Color.Yellow)}{trailingPartialEscapeSequence}";
+
+                var outputAnsiColorString = input.Pastel(ConsoleColor.Magenta);
+
+                Assert.Equal($"\x1b[95mSTART_\x1b[38;2;255;255;0m[TEST1]\x1b[0m\x1b[95m{trailingPartialEscapeSequence}\x1b[0m", outputAnsiColorString);
+            }
+
             [Fact]
             public void A_String_Containing_Console_Escape_Sequences_Should_Be_Correctly_Nested_When_Applying_ConsoleColor()
             {
