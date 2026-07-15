@@ -71,7 +71,7 @@ The predicate was verified exhaustively against the .NET 8 list pattern over 196
 
 ## Code style
 
-There is **no `.editorconfig`**; the conventions exist only by example. Match the surrounding code.
+`.editorconfig` covers formatting, encoding and the analyzer severities, but it can't express everything below. Match the surrounding code.
 
 - Block-scoped namespace, `using` directives **inside** it, `System` first.
 - Allman braces. Single-statement `if` bodies always get braces.
@@ -95,7 +95,9 @@ The repo is a deliberate mix, and both sides should stay as they are:
 git ls-files --eol src/YourNewFile.cs   # want i/crlf for sources
 ```
 
-Sources are also UTF-8 with BOM.
+`.editorconfig` now sets `end_of_line = crlf` for `.cs`, which handles any editor that honours it — but a tool writing bytes directly (this includes an agent) bypasses it entirely, so the check above is still the one that matters.
+
+**Sources are UTF-8 *without* a BOM, and `.cs` files are ASCII-only.** `EnvironmentTests.cs` was the sole exception — it arrived with a BOM from an outside contribution (#30) and was stripped to match everything else. `charset = utf-8` in `.editorconfig` (as opposed to `utf-8-bom`) is what keeps it that way.
 
 
 ## Tests

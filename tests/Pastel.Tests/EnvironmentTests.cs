@@ -1,4 +1,4 @@
-﻿namespace Pastel.Tests
+namespace Pastel.Tests
 {
     using Xunit;
 
