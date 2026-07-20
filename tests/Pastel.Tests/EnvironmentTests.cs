@@ -17,8 +17,11 @@ namespace Pastel.Tests
         // detector matches a GITHUB_ACTION prefix, and a real runner sets GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY and more.
         private static readonly string[] _detectedEnvironmentVariablePrefixes = { "BITBUCKET_", "TEAMCITY_", "NO_COLOR", "GITHUB_ACTION", "CI", "JENKINS_URL" };
 
-        [Theory, CombinatorialData]
-        public void TestEnvironmentVariables([CombinatorialMemberData(nameof(GetEnvironmentVariables))] (string Key, string Value, bool ExpectedOutcome) environmentVariable, [CombinatorialMemberData(nameof(GetEnvironmentDetectionDisabledEnvironmentVariables))] string environmentDetectionDisabledEnvironmentVariable)
+        // MatrixTheoryData produces the Cartesian product of the two data sources, exactly what [CombinatorialData] with two [CombinatorialMemberData] parameters did before the xUnit v3 migration.
+        public static MatrixTheoryData<(string Key, string Value, bool ExpectedOutcome), string> EnvironmentVariableMatrix => new MatrixTheoryData<(string Key, string Value, bool ExpectedOutcome), string>(GetEnvironmentVariables(), GetEnvironmentDetectionDisabledEnvironmentVariables());
+
+        [Theory, MemberData(nameof(EnvironmentVariableMatrix))]
+        public void TestEnvironmentVariables((string Key, string Value, bool ExpectedOutcome) environmentVariable, string environmentDetectionDisabledEnvironmentVariable)
         {
             var suppressedEnvironmentVariables = new Dictionary<string, string>();
 

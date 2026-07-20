@@ -102,10 +102,14 @@ git ls-files --eol src/YourNewFile.cs   # want i/crlf for sources
 
 ## Tests
 
-xUnit, `net462;net8.0;net9.0`. Nested classes group by concern; methods read `Given_..._Should_...`.
+xUnit **v3**, `net472;net8.0;net9.0`. Nested classes group by concern; methods read `Given_..._Should_...`.
 
-- Parallelization is disabled via an MSBuild `AssemblyAttribute` in `Pastel.Tests.csproj`, not a source attribute. The tests mutate global state (`ConsoleExtensions.Enable()`/`Disable()`, environment variables), so they can't run concurrently.
+**The test project targets net472, not net462 like the library.** xUnit v3's in-process test host runner ships `net472;net8.0` only — there is no net462 host — so the tests can't run on net462. They still exercise the **net462-built** `Pastel.dll`, which the net472 test project loads via nearest-compatible-TFM fallback, so the fragile net462 code path is still covered. The library itself stays `net462;net8.0;net9.0`; don't "align" it to the test project.
+
+- v3 test projects are self-executing hosts, so `Pastel.Tests.csproj` sets `<OutputType>Exe</OutputType>`. The net472 build produces `Pastel.Tests.exe`.
+- Parallelization is disabled via an MSBuild `AssemblyAttribute` (`Xunit.CollectionBehavior` with `DisableTestParallelization`) in `Pastel.Tests.csproj`, not a source attribute. The attribute survived the v3 migration unchanged. The tests mutate global state (`ConsoleExtensions.Enable()`/`Disable()`, environment variables), so they can't run concurrently.
 - Internals are reached through `InternalsVisibleTo`, declared in `src/Pastel.csproj`.
+- The combinatorial cross product in `EnvironmentTests` uses xUnit v3's `MatrixTheoryData<T1, T2>` (a `[MemberData]` source), which replaced the `Xunit.Combinatorial` package's `[CombinatorialData]` / `[CombinatorialMemberData]`. That package is gone.
 - **A test for a target-framework-specific bug must be run against the unfixed code**, and it should fail on the affected framework only. Several bugs here reproduce on exactly one target framework, so a test that passes everywhere before the fix is testing nothing.
 
 **The test suite is environment-sensitive, and passing locally proves little.** Pastel disables itself in a CI/CD environment, so anything asserting on colored output fails on a build server unless it's in the `ColorOutputEnabledCollection`, whose fixture calls `Enable()`.
@@ -138,7 +142,7 @@ All three target frameworks write that same path, so the file is whichever one b
 
 `.github/workflows/release.yml`, `workflow_dispatch` only, pushes to NuGet via Trusted Publishing.
 
-**It must run on `windows-latest`.** The Ubuntu runners have neither Mono nor the .NET Framework reference assemblies, so net462 can't be built or tested there. The workflow had never been run even once before this was corrected, so nothing had ever surfaced it. Never trigger it without asking — it publishes.
+**It must run on `windows-latest`.** The Ubuntu runners have neither Mono nor the .NET Framework reference assemblies, so the library's net462 target and the tests' net472 target can't be built or tested there. The workflow had never been run even once before this was corrected, so nothing had ever surfaced it. Never trigger it without asking — it publishes.
 
 
 ## Performance

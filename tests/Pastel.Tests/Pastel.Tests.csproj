@@ -1,16 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;net8.0;net9.0</TargetFrameworks>
+    <!-- net472, not net462: xUnit v3's in-process test host runner ships net472;net8.0 only, so there is no net462 host. The net462-built Pastel assembly is still exercised, loaded here via nearest-compatible-TFM fallback -->
+    <TargetFrameworks>net472;net8.0;net9.0</TargetFrameworks>
+
+    <!-- xUnit v3 test projects are self-executing test hosts rather than libraries loaded by an external runner -->
+    <OutputType>Exe</OutputType>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="Xunit.Combinatorial" Version="1.6.24" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -18,10 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Pastel.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-    <PackageReference Include="System.ValueTuple" Version="4.6.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -910,6 +910,7 @@ namespace Pastel
         private const string HexColorParameterName = "hexColor";
 
 #if NET8_0_OR_GREATER
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly", Justification = "HexColorParameterName names the caller's parameter, not this helper's - every public overload that reaches here names its own parameter hexColor")]
         private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new($"Invalid hexadecimal color value encountered: {hexString}", HexColorParameterName);
 #else
         private static ArgumentException InvalidHexadecimalColorValueException(in ReadOnlySpan<char> hexString) => new ArgumentException($"Invalid hexadecimal color value encountered: {hexString.ToString()}", HexColorParameterName);

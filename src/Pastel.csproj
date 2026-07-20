@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Pastel.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
